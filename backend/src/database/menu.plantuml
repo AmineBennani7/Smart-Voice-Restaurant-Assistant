@@ -1,0 +1,31 @@
+@startuml menu 
+skinparam classBackgroundColor AliceBlue
+skinparam classBorderColor Blue
+skinparam classFontName Comic Sans 
+skinparam classFontSize 20
+
+class Plato {
+  - ID: int
+  - categoría: string
+  - nombre: string
+  - descripcion: string
+}
+
+class VariaciónPlato {
+  - ID: int
+  - plato_ID: int
+  - variacion: string
+  - price: double
+}
+
+class PlatoExtra {
+  - ID: int
+  - plato_ID: int
+  - extras: string
+  - precio: double
+}
+
+Plato "1" -- "1..*" VariaciónPlato : tiene
+Plato "1" -- "1..*" PlatoExtra : tiene
+
+@enduml

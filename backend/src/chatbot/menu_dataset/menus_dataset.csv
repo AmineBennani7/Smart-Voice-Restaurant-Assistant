@@ -1,0 +1,3 @@
+name,category,description,variations,extras
+Spaghetti Bolognese,Pasta,Spaghetti con salsa bolognesa,"[{'variacion': 'Tamaño regular', 'precio': 9.99}, {'variacion': 'Tamaño grande', 'precio': 12.99}]","[{'extra': 'Albóndigas', 'precio': 2.5}, {'extra': 'Queso parmesano', 'precio': 1.5}]"
+Fettuccine Alfredo,Pasta,Fettuccine con salsa Alfredo cremosa,"[{'variacion': 'Tamaño regular', 'precio': 10.99}, {'variacion': 'Tamaño grande', 'precio': 14.99}]","[{'extra': 'Pollo a la parrilla', 'precio': 3.5}, {'extra': 'Broccoli', 'precio': 2.0}]"

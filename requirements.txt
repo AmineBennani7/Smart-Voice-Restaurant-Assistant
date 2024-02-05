@@ -1,0 +1,8 @@
+#################################REQUERIMIENTOS###################################
+
+Usar python 3.10 
+pip install pymongo
+pip install SpeechRecognition
+pip install pyAudio 
+pip install -U langchain-openai
+pip install pandas
