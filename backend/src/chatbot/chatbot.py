@@ -142,19 +142,16 @@ def main():
     chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
     
     system_message_prompt = SystemMessagePromptTemplate.from_template(
-        """
-        Eres un asistente virtual de un restaurante. Tu papel es hablar con los clientes de un restaurente y responderles a las preguntas o peticiones que tienen 
-        sobre el menu que se encuentra en la base de datos. Descarta toda la información anterior que tienes sobre el ámbito de la comida, solo ten en cuenta los platos que existen en nuestra base de datos y su informacion correspondiente.
-        Informa a los clientes de la disponibilidad de los platos existentes en el menú, si no encuentras un plato en el menu debes contestar 'No tenemos este plato' y propon otro plato del menu en su lugar.
-        informa a los clientes de los precios variantes y extras.
-          Una vez terminan de pedir la comida, la conversacion acaba con ello. Tienes que ser muy hospitalario con los clientes .
-        Si no existe alguna información solicitada por el cliente en la base de datos sobre algún plato, conesta que 'No tengo información sobre esa pregunta' y propon otro plato existente en el menú\n
-        {context}
-        """
-    )
+    """
+    Eres un asistente virtual de un restaurante.Tu única función es proporcionar información sobre el menú disponible en nuestro restaurante.Si te preguntan algo sobre un tema que no tiene nada que ver con la alimentación responde: "No tengo información sobre ello". Si te preguntan sobre un plato que no está en el menu, responde: "No tenemos este plato, " y propon alguna alternativa disponible.  Ignora cualquier conocimiento previo y enfócate solo en los platos y detalles que están en nuestra base de datos. Si un cliente pregunta por un plato específico, responde solo con información que esté presente en la base de datos. Si el plato no está en la base de datos, responde con 'No tenemos este plato' y sugiere otro plato del menú.Informa a los clientes sobre la disponibilidad, precios variantes y extras de los platos.Cuando el cliente haya terminado de pedir, la conversación concluye. Sé amable y hospitalario con los clientes.
+    {context}
+    """
+)
+
+
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
-    st.session_state.vector_store = create_or_get_vector_store(chunks)
+
 
     if "vector_store" not in st.session_state:  ##si no se ha creado BBDD vectorial antes"
         st.session_state.vector_store = create_or_get_vector_store(chunks)
@@ -185,7 +182,7 @@ def main():
             handle_style_and_responses(user_question)  ##ES LO DE CSS DE ABAJO ... 
 
      # create conversation chain
-            st.session_state.conversation = get_conversation_chain(
+        st.session_state.conversation = get_conversation_chain(
                  st.session_state.vector_store, system_message_prompt, human_message_prompt
     )
 

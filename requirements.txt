@@ -5,4 +5,6 @@ pip install pymongo
 pip install SpeechRecognition
 pip install pyAudio 
 pip install -U langchain-openai
-pip install pandas
+pip install Wikipedia 
+pip install numexpr  
+pip install langchain faiss-cpu openai tiktoken InstructorEmbedding sentence-transformers streamlit python-dotenv pandas trafilatura
