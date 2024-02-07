@@ -1,5 +1,6 @@
 #pip install --upgrade pip 
 # pip install -U langchain-openai
+
 import pandas as pd
 import os
 from langchain_community.vectorstores import FAISS
@@ -73,15 +74,15 @@ def create_or_get_vector_store(chunks: list) -> FAISS:
     embeddings = OpenAIEmbeddings() # USAMOS EL EMBEDDING DE OPENAI DE MOMENTO
     # embeddings = HuggingFaceInstructEmbeddings() # for example by uncommenting here and commenting the line above
 
-    if not os.path.exists("./backend/src/vectorialDB"):
+    if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
         vectorstore = FAISS.from_documents(
             chunks, embeddings
         )
-        vectorstore.save_local("./backend/src/vectorialDB")
+        vectorstore.save_local("./vectorialDB")
     else:
         print("LOADING DB")
-        vectorstore = FAISS.load_local("./backend/src/vectorialDB", embeddings)
+        vectorstore = FAISS.load_local("./vectorialDB", embeddings)
 
     return vectorstore
 
@@ -99,14 +100,14 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
         ConversationalRetrievalChain: Chatbot conversation chain
     """
   # Si no ponemos nada usamos llm GPT-3 boost
-    llm = ChatOpenAI(temperature=0.5)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo",temperature=0.5)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
     
     # Crear una instancia de un vector store (almacén de vectores) utilizando el índice FAISS
     # Esto se utiliza para recuperar documentos similares (vectores) durante la conversación
     # 'as_retriever()' convierte el vector store en un objeto retriever (recuperador)
 
     memory_key = "chat_history"
-
+    ##Inicializo 
     if "conversation_memory" not in st.session_state:
         st.session_state.conversation_memory = ConversationBufferMemory(memory_key=memory_key, return_messages=True)
 
@@ -138,27 +139,63 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
 def main():
     load_dotenv() # load environment variables
     df = load_dataset() # ARRIBA LO DEFINO
-   #print (df)
+   
     chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
+   
     
     system_message_prompt = SystemMessagePromptTemplate.from_template(
-    """
-    Eres un asistente virtual de un restaurante.Tu única función es proporcionar información sobre el menú disponible en nuestro restaurante.Si te preguntan algo sobre un tema que no tiene nada que ver con la alimentación responde: "No tengo información sobre ello". Si te preguntan sobre un plato que no está en el menu, responde: "No tenemos este plato, " y propon alguna alternativa disponible.  Ignora cualquier conocimiento previo y enfócate solo en los platos y detalles que están en nuestra base de datos. Si un cliente pregunta por un plato específico, responde solo con información que esté presente en la base de datos. Si el plato no está en la base de datos, responde con 'No tenemos este plato' y sugiere otro plato del menú.Informa a los clientes sobre la disponibilidad, precios variantes y extras de los platos.Cuando el cliente haya terminado de pedir, la conversación concluye. Sé amable y hospitalario con los clientes.
-    {context}
-    """
+"""
+Eres un asistente virtual de un restaurante. Tu única función es proporcionar información sobre el menú disponible en nuestra base de datos (CSV). La base de datos contiene información sobre el nombre del plato, su categoría, precio y extras.
+
+Instrucciones:
+
+Plato no encontrado:
+Si el usuario pregunta, pide o quiere  un plato que no está en el menú, responde: "Lo siento, no tenemos ese plato en el menú. ¿Te gustaría que te recomiende algo similar?"
+
+Plato con nombre diferente:
+Si el usuario pregunta,pide o quiere  un plato con un nombre diferente, responde: "No tenemos un plato con ese nombre en el menú. ¿Podrías ser más específico sobre lo que estás buscando?"
+
+Información no disponible:
+Si el usuario pregunta,pide o quiere información que no está en la base de datos, responde: "Lo siento, no tengo información sobre eso en este momento. ¿Te gustaría que te ayude con algo más?"
+
+Plato no encontrado en la base de datos:
+Si el usuario pregunta por un plato que no está en la base de datos, responde: "Lo siento, no tenemos ese plato en el menú. ¿Te gustaría que te recomiende algo similar?"
+
+Ejemplo de uso:
+
+Usuario: ¿Tienen hamburguesas?
+
+Chatbot: Lo siento, no tenemos hamburguesas en el menú. ¿Te gustaría que te recomiende algo similar?
+
+Usuario: Sí, por favor.
+
+Chatbot: Tenemos un sándwich de carne que podría gustarte. Viene con pan de centeno, carne de res Angus, queso cheddar y cebolla caramelizada. Cuesta 9,99 €.
+
+Recuerda:
+
+Ignora cualquier conocimiento previo y enfócate solo en la información de la base de datos.
+Si un cliente pregunta por un plato específico, responde solo con información que esté presente en la base de datos.
+Si el plato no está en la base de datos, responde con "No tenemos este plato" y sugiere otro plato del menú.
+Informa a los clientes sobre la disponibilidad, precios variantes y extras de los platos.
+Cuando el cliente haya terminado de pedir, la conversación concluye.
+Sé amable y hospitalario con los clientes.
+{context}
+"""
 )
 
 
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
 
-
-    if "vector_store" not in st.session_state:  ##si no se ha creado BBDD vectorial antes"
-        st.session_state.vector_store = create_or_get_vector_store(chunks)
+    print(create_or_get_vector_store(chunks))
+    if "vector_store" not in st.session_state:  ##si no se ha creado BBDD vectorial antes
+        st.session_state.vector_store = create_or_get_vector_store(chunks)  # Inicializar vector_store aquí
     if "conversation" not in st.session_state: ##si conversacion es nula
         st.session_state.conversation = None
     if "chat_history" not in st.session_state:  ##si historial es nulo
         st.session_state.chat_history = None
+    
+ 
 
     st.set_page_config(
         page_title="Documentation Chatbot",
@@ -177,17 +214,19 @@ def main():
 
     user_question = st.text_input("Ask your question")
 
+
+    st.session_state.conversation = get_conversation_chain(
+                 st.session_state.vector_store, system_message_prompt, human_message_prompt)
     with st.spinner("Processing..."):
         if user_question:
             handle_style_and_responses(user_question)  ##ES LO DE CSS DE ABAJO ... 
-
-     # create conversation chain
-        st.session_state.conversation = get_conversation_chain(
-                 st.session_state.vector_store, system_message_prompt, human_message_prompt
-    )
-
+    # create conversation chain
+ 
+    
+  
 
 def handle_style_and_responses(user_question: str) -> None:
+
     """
     Handle user input to create the chatbot conversation in Streamlit
 
