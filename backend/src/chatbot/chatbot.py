@@ -13,9 +13,10 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,
 )
-import streamlit as st 
+import streamlit as st
+from langchain.text_splitter import CharacterTextSplitter
 
-from pprint import pprint 
+
 
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
@@ -68,7 +69,7 @@ def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
 
 
 
-def create_or_get_vector_store(chunks: list) -> FAISS:
+def create_or_get_vector_store() -> FAISS:
     """Crea o carga BBDD vectorial de manera local"""
 
     embeddings = OpenAIEmbeddings() # USAMOS EL EMBEDDING DE OPENAI DE MOMENTO
@@ -76,10 +77,35 @@ def create_or_get_vector_store(chunks: list) -> FAISS:
 
     if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
-        vectorstore = FAISS.from_documents(
-            chunks, embeddings
+         # load data
+        articles = pd.read_csv("./menu_dataset/menus_dataset.csv")
+
+        #Los divido en chunks aqui 
+        chunks = DataFrameLoader(
+            articles, page_content_column="name"
+        ).load_and_split(
+            text_splitter=CharacterTextSplitter(
+                separator="\n", chunk_size=1000, chunk_overlap=0, length_function=len
+            )
         )
+        for chunk in chunks:
+
+            # Agregar metadata como:
+            name = chunk.page_content 
+            print(name)
+            category = chunk.metadata['category']
+            description= chunk.metadata['description']
+            variations = chunk.metadata['variations']
+            extras = chunk.metadata['extras']
+            # Agregar todo al contenido
+            content = f"Name: {name} \nCategory: {category} \nDescription: {description} \nVariations: {variations}\nExtras: {extras}"
+            chunk.page_content = content
+
+        vectorstore = FAISS.from_documents(
+                chunks, embeddings
+            )
         vectorstore.save_local("./vectorialDB")
+
     else:
         print("LOADING DB")
         vectorstore = FAISS.load_local("./vectorialDB", embeddings)
@@ -100,7 +126,7 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
         ConversationalRetrievalChain: Chatbot conversation chain
     """
   # Si no ponemos nada usamos llm GPT-3 boost
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo",temperature=0.5)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo")  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
     
     # Crear una instancia de un vector store (almacén de vectores) utilizando el índice FAISS
     # Esto se utiliza para recuperar documentos similares (vectores) durante la conversación
@@ -140,7 +166,7 @@ def main():
     load_dotenv() # load environment variables
     df = load_dataset() # ARRIBA LO DEFINO
    
-    chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
+   # chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
    
     
     system_message_prompt = SystemMessagePromptTemplate.from_template(
@@ -173,6 +199,8 @@ Chatbot: Tenemos un sándwich de carne que podría gustarte. Viene con pan de ce
 
 Recuerda:
 
+Tienes que apuntar los platos que vaya pidiendo el cliente para que al final resumas lo que ha pedido el cliente
+
 Ignora cualquier conocimiento previo y enfócate solo en la información de la base de datos.
 Si un cliente pregunta por un plato específico, responde solo con información que esté presente en la base de datos.
 Si el plato no está en la base de datos, responde con "No tenemos este plato" y sugiere otro plato del menú.
@@ -186,14 +214,21 @@ Sé amable y hospitalario con los clientes.
 
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
-
-    print(create_or_get_vector_store(chunks))
-    if "vector_store" not in st.session_state:  ##si no se ha creado BBDD vectorial antes
-        st.session_state.vector_store = create_or_get_vector_store(chunks)  # Inicializar vector_store aquí
-    if "conversation" not in st.session_state: ##si conversacion es nula
+    if "vectorstore" not in st.session_state:
+        st.session_state.vectorstore = None
+    if "conversation" not in st.session_state:
         st.session_state.conversation = None
-    if "chat_history" not in st.session_state:  ##si historial es nulo
+    if "chat_history" not in st.session_state:
         st.session_state.chat_history = None
+
+    if st.session_state.vectorstore is None:
+        st.session_state.vectorstore = create_or_get_vector_store()
+
+    # create conversation chain
+    st.session_state.conversation = get_conversation_chain(
+        st.session_state.vectorstore, system_message_prompt, human_message_prompt
+    )
+  
     
  
 
@@ -215,8 +250,7 @@ Sé amable y hospitalario con los clientes.
     user_question = st.text_input("Ask your question")
 
 
-    st.session_state.conversation = get_conversation_chain(
-                 st.session_state.vector_store, system_message_prompt, human_message_prompt)
+  
     with st.spinner("Processing..."):
         if user_question:
             handle_style_and_responses(user_question)  ##ES LO DE CSS DE ABAJO ... 

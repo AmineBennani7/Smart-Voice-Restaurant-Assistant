@@ -8,3 +8,9 @@ pip install -U langchain-openai
 pip install Wikipedia 
 pip install numexpr  
 pip install langchain faiss-cpu openai tiktoken InstructorEmbedding sentence-transformers streamlit python-dotenv pandas trafilatura
+pip install huggingface-hub
+pip install  chromadb
+
+
+pip install spacy
+python -m spacy download es_core_news_sm
