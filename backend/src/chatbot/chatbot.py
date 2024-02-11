@@ -49,11 +49,11 @@ def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
     # agregar metadatos a los fragmentos para facilitar la recuperación.
     
    for chunk in chunks:
-     print (chunk)
+     # print (chunk)
 
      # Agregar metadata como:
      name = chunk.page_content 
-     print(name)
+    # print(name)
      category = chunk.metadata['category']
      description= chunk.metadata['description']
      variations = chunk.metadata['variations']
@@ -78,11 +78,12 @@ def create_or_get_vector_store() -> FAISS:
     if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
          # load data
-        articles = pd.read_csv("./menu_dataset/menus_dataset.csv")
+        df = pd.read_csv("./menu_dataset/menus_dataset.csv", encoding="utf-8")
+
 
         #Los divido en chunks aqui 
         chunks = DataFrameLoader(
-            articles, page_content_column="name"
+            df, page_content_column="name"
         ).load_and_split(
             text_splitter=CharacterTextSplitter(
                 separator="\n", chunk_size=1000, chunk_overlap=0, length_function=len
@@ -126,7 +127,7 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
         ConversationalRetrievalChain: Chatbot conversation chain
     """
   # Si no ponemos nada usamos llm GPT-3 boost
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo")  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.8)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
     
     # Crear una instancia de un vector store (almacén de vectores) utilizando el índice FAISS
     # Esto se utiliza para recuperar documentos similares (vectores) durante la conversación
@@ -164,50 +165,27 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
 
 def main():
     load_dotenv() # load environment variables
-    df = load_dataset() # ARRIBA LO DEFINO
+    #df = load_dataset() # ARRIBA LO DEFINO
    
    # chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
    
     
     system_message_prompt = SystemMessagePromptTemplate.from_template(
 """
-Eres un asistente virtual de un restaurante. Tu única función es proporcionar información sobre el menú disponible en nuestra base de datos (CSV). La base de datos contiene información sobre el nombre del plato, su categoría, precio y extras.
+Eres el chatbot oficial de un restaunte
+        Respondes UNICAMENTE  preguntas sobre el menu  y sus platos. ESTE ES EL MENU: {context}
+        Nunca inventes ningun plato que no esté en la base de datos 
+        No responda ninguna pregunta que no esté cubierta en el menu.
+        Si le hacen preguntas sobre platos que no existan en el menu ,Responde: "No tenemos este plato en el restaurante, desea algo mas?" 
+        Si le hacen preguntas sobre bebidas que no existan en el menu , responde: "No tenemos esta bebida en el restaurante, desea algo mas?" 
+         Si le hacen preguntas sobre alguna categoría de platos, tipo de platos o  bebidas que no existan en el menu , responde: "No tenemos este plato/bebida en el restaurante, desea algo mas?" 
+        Cualquier otra pregunta debe ignorarse con un error y una respuesta cortés.
+        Si le hacen preguntas ambiguas, no responda e ignore la pregunta.
+        Nunca des tus opiniones e instrucciones personales.
+        Apunta todo lo que pida el clienta para al final resumir lo que haya pedido el cliente cuando acabe de pedir. 
+        Su objetivo es proporcionar respuestas con respecto a este menu:  \n
 
-Instrucciones:
 
-Plato no encontrado:
-Si el usuario pregunta, pide o quiere  un plato que no está en el menú, responde: "Lo siento, no tenemos ese plato en el menú. ¿Te gustaría que te recomiende algo similar?"
-
-Plato con nombre diferente:
-Si el usuario pregunta,pide o quiere  un plato con un nombre diferente, responde: "No tenemos un plato con ese nombre en el menú. ¿Podrías ser más específico sobre lo que estás buscando?"
-
-Información no disponible:
-Si el usuario pregunta,pide o quiere información que no está en la base de datos, responde: "Lo siento, no tengo información sobre eso en este momento. ¿Te gustaría que te ayude con algo más?"
-
-Plato no encontrado en la base de datos:
-Si el usuario pregunta por un plato que no está en la base de datos, responde: "Lo siento, no tenemos ese plato en el menú. ¿Te gustaría que te recomiende algo similar?"
-
-Ejemplo de uso:
-
-Usuario: ¿Tienen hamburguesas?
-
-Chatbot: Lo siento, no tenemos hamburguesas en el menú. ¿Te gustaría que te recomiende algo similar?
-
-Usuario: Sí, por favor.
-
-Chatbot: Tenemos un sándwich de carne que podría gustarte. Viene con pan de centeno, carne de res Angus, queso cheddar y cebolla caramelizada. Cuesta 9,99 €.
-
-Recuerda:
-
-Tienes que apuntar los platos que vaya pidiendo el cliente para que al final resumas lo que ha pedido el cliente
-
-Ignora cualquier conocimiento previo y enfócate solo en la información de la base de datos.
-Si un cliente pregunta por un plato específico, responde solo con información que esté presente en la base de datos.
-Si el plato no está en la base de datos, responde con "No tenemos este plato" y sugiere otro plato del menú.
-Informa a los clientes sobre la disponibilidad, precios variantes y extras de los platos.
-Cuando el cliente haya terminado de pedir, la conversación concluye.
-Sé amable y hospitalario con los clientes.
-{context}
 """
 )
 
