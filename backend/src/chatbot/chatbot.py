@@ -23,7 +23,6 @@ from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
-
 def load_dataset(dataset_name="menu_dataset/menus_dataset.csv"):
     #cargar un conjunto de datos desde un archivo csv 
     current_dir = os.path.dirname(os.path.realpath(__file__))  ##cojo nuestra current dir
@@ -31,6 +30,7 @@ def load_dataset(dataset_name="menu_dataset/menus_dataset.csv"):
 
     df = pd.read_csv(file_path) ##leo el csv
     return df
+
 
 def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
    """
@@ -57,10 +57,10 @@ def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
      category = chunk.metadata['category']
      description= chunk.metadata['description']
      variations = chunk.metadata['variations']
-     extras = chunk.metadata['extras']
+     #extras = chunk.metadata['extras']
      
      # Agregar todo al contenido
-     content = f"Name: {name} \nCategory: {category} \nDescription: {description} \nVariations: {variations}\nExtras: {extras}"
+     content = f"Name: {name} \nCategory: {category} \nDescription: {description} \nVariations: {variations}"   # nExtras: {extras}"
      
      chunk.page_content = content
      
@@ -69,7 +69,7 @@ def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
 
 
 
-def create_or_get_vector_store() -> FAISS:
+def create_or_get_vector_store(chunks) -> FAISS:
     """Crea o carga BBDD vectorial de manera local"""
 
     embeddings = OpenAIEmbeddings() # USAMOS EL EMBEDDING DE OPENAI DE MOMENTO
@@ -78,29 +78,9 @@ def create_or_get_vector_store() -> FAISS:
     if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
          # load data
-        df = pd.read_csv("./menu_dataset/menus_dataset.csv", encoding="utf-8")
 
 
-        #Los divido en chunks aqui 
-        chunks = DataFrameLoader(
-            df, page_content_column="name"
-        ).load_and_split(
-            text_splitter=CharacterTextSplitter(
-                separator="\n", chunk_size=1000, chunk_overlap=0, length_function=len
-            )
-        )
-        for chunk in chunks:
-
-            # Agregar metadata como:
-            name = chunk.page_content 
-            print(name)
-            category = chunk.metadata['category']
-            description= chunk.metadata['description']
-            variations = chunk.metadata['variations']
-            extras = chunk.metadata['extras']
-            # Agregar todo al contenido
-            content = f"Name: {name} \nCategory: {category} \nDescription: {description} \nVariations: {variations}\nExtras: {extras}"
-            chunk.page_content = content
+       
 
         vectorstore = FAISS.from_documents(
                 chunks, embeddings
@@ -136,7 +116,7 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
     memory_key = "chat_history"
     ##Inicializo 
     if "conversation_memory" not in st.session_state:
-        st.session_state.conversation_memory = ConversationBufferMemory(memory_key=memory_key, return_messages=True)
+        st.session_state.conversation_memory = ConversationBufferMemory(memory_key=memory_key, return_messages=True)    
 
     memory = st.session_state.conversation_memory
     
@@ -163,31 +143,69 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
     return conversation_chain
 
 
+
+
 def main():
     load_dotenv() # load environment variables
-    #df = load_dataset() # ARRIBA LO DEFINO
+    df = load_dataset() # ARRIBA LO DEFINO
    
-   # chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
+    chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
    
     
-    system_message_prompt = SystemMessagePromptTemplate.from_template(
+    system_message_prompt_info = SystemMessagePromptTemplate.from_template(
 """
-Eres el chatbot oficial de un restaunte
-        Respondes UNICAMENTE  preguntas sobre el menu  y sus platos. ESTE ES EL MENU: {context}
-        Nunca inventes ningun plato que no esté en la base de datos 
-        No responda ninguna pregunta que no esté cubierta en el menu.
-        Si le hacen preguntas sobre platos que no existan en el menu ,Responde: "No tenemos este plato en el restaurante, desea algo mas?" 
-        Si le hacen preguntas sobre bebidas que no existan en el menu , responde: "No tenemos esta bebida en el restaurante, desea algo mas?" 
-         Si le hacen preguntas sobre alguna categoría de platos, tipo de platos o  bebidas que no existan en el menu , responde: "No tenemos este plato/bebida en el restaurante, desea algo mas?" 
-        Cualquier otra pregunta debe ignorarse con un error y una respuesta cortés.
-        Si le hacen preguntas ambiguas, no responda e ignore la pregunta.
-        Nunca des tus opiniones e instrucciones personales.
-        Apunta todo lo que pida el clienta para al final resumir lo que haya pedido el cliente cuando acabe de pedir. 
-        Su objetivo es proporcionar respuestas con respecto a este menu:  \n
+Eres el chatbot oficial de un restaurante.
+Tienes una única función: responder preguntas sobre el menú .
+Este es el menú: {context}.
+SI te preguntan sobre una categoría que no existe en el menu, responde : "No tenemos ese tipo de platos en nuestro menu".
+Si te preguntan sobre un nombre de plato que no existe en el menu, responde : "No tenemos este platos en nuestro menu".
 
+Nunca inventes ningún plato que no esté menu.
+Nunca inventes ninguna categoría de platos que no esté en el menu.
+NUnca inventes ningun nombre de plato dentro de una categoría inexistente en nuestro menu. 
+No respondas preguntas que no estén cubiertas en el menú.
+Si te hacen preguntas sobre nombres de platos que no existan en el menú, responde: "No tenemos este plato en el restaurante, ¿desea preguntar algo más o empezar a pedir?".
+Si te hacen preguntas sobre nombres de bebidas que no existan en el menú, responde: "No tenemos esta bebida en el restaurante, ¿desea preguntar algo más o empezar a pedir?".
+Si te hacen preguntas sobre alguna categoría de platos, tipo de platos o bebidas que no existan en el menú, responde: "No tenemos este plato/bebida en el restaurante, ¿desea preguntar algo más o empezar a pedir?".
+Cualquier otra pregunta debe ser ignorada respondida con una respuesta cortés.
+Si te hacen preguntas ambiguas, no respondas e ignora la pregunta.
+Nunca des tus opiniones e instrucciones personales.
 
+{chat_history}\n
 """
 )
+   
+
+    
+
+
+    system_message_prompt_pedido = SystemMessagePromptTemplate.from_template(
+    """
+    Eres el chatbot oficial de un restaurante y estas teniendo una conversación con un cliente. 
+    Este es el menú: {context} 
+    Primero, el cliente (usuario) empezará escribiendo su nombre (nombre de una persona) (Si no escribe su nombre al principio, insiste hasta que un nombre de una persona). Responde inmediatamente con "De acuerdo #'Nombre', ¿qué deseas pedir?".
+
+    Después de que el cliente escriba su nombre , entraremos en el siguiente bucle:
+
+    - Si el usuario escribe que quiere (o quiere pedir)  plato que sí está en el menú (columna name), responde con "Perfecto #Nombre, ¿qué más quieres pedir  ?".
+        -- Si después de preguntar "¿qué más quieres pedir?", el usuario responde de forma negativa (no,nada más, ...)  di:"Perfecto, este es el pedido: "Lista del pedido" y sales del bucle.
+            
+    - Si el usuario escribe que quiere (o quiere pedir) un plato que no está en el menú, informa educadamente: "No tenemos este plato en el restaurante, ¿deseas pedir algo más?".
+        -- Si después de preguntar "¿qué más quieres pedir?", el usuario responde  de forma negativa (no,nada más, ...) di: "Perfecto, este es el pedido: "Lista del pedido" y sales del bucle.
+
+    Finalmente, una vez que el cliente haya terminado de pedir, proporciona un resumen del pedido enumerando todos los platos pedidos por el cliente.
+    Apunta todo lo que pida el cliente para resumir al final.
+
+    NO SALGAS DEL CONTEXTO
+    No respondas preguntas que no estén cubiertas en el menú. 
+    Conversa amablemente y evita dar opiniones personales.
+
+    {chat_history}\n
+    """
+    )
+
+
+    
 
 
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
@@ -200,32 +218,53 @@ Eres el chatbot oficial de un restaunte
         st.session_state.chat_history = None
 
     if st.session_state.vectorstore is None:
-        st.session_state.vectorstore = create_or_get_vector_store()
+        st.session_state.vectorstore = create_or_get_vector_store(chunks)
 
-    # create conversation chain
-    st.session_state.conversation = get_conversation_chain(
-        st.session_state.vectorstore, system_message_prompt, human_message_prompt
-    )
+ 
   
     
  
 
     st.set_page_config(
-        page_title="Documentation Chatbot",
-        page_icon=":books:",
+        page_title="Chatbot del Menú del Restaurante",
+        page_icon=":fork_and_knife:",
     )
 
-    st.title("Documentation Chatbot")
-    st.subheader("Chat with LangChain's documentation!")
-    st.markdown(
-        """
-        This chatbot was created to answer questions about the LangChain project documentation.
-        Ask a question and the chatbot will respond with the most relevant page of the documentation.
-        """
-    )
+    st.title("Chatbot del Menú del Restaurante")
+    st.subheader("Chatea con el chatbot para obtener información sobre el menú del restaurante.")
+
     st.image("https://images.unsplash.com/photo-1485827404703-89b55fcc595e") # Image taken with credit from Unsplash - ref. Alex Knight
 
-    user_question = st.text_input("Ask your question")
+    # Pregunta predeterminada para iniciar la conversación
+    first_question = "Buenos días. "
+    user_question = st.text_input("Ask your question", first_question)
+
+
+
+#Mode "Info" predetermindado    
+    if "prompt_mode" not in st.session_state:
+        st.session_state.prompt_mode = "info"
+
+    # Si la pregunta del usuario es "Quiero empezar a pedir", cambiar el estado.
+    if user_question.strip().lower() == "quiero empezar a pedir":
+        st.session_state.prompt_mode = "pedido"
+        # Responder al usuario informándole que puede empezar a pedir.
+        st.write("Perfecto. Dime cual es tu nombre.")
+        # No procesar esta pregunta en el chatbot.
+        user_question = ""
+
+
+    # Elige el prompt correcto dependiendo del estado.
+    if st.session_state.prompt_mode == "info":
+        system_message_prompt = system_message_prompt_info
+    else:
+        system_message_prompt = system_message_prompt_pedido
+    
+    #print(st.session_state.prompt_mode)
+    st.session_state.conversation = get_conversation_chain(
+        st.session_state.vectorstore, system_message_prompt, human_message_prompt
+    )
+
 
 
   
