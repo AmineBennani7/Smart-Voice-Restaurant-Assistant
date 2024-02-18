@@ -23,6 +23,7 @@ from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
+
 def load_dataset(dataset_name="menu_dataset/menus_dataset.csv"):
     #cargar un conjunto de datos desde un archivo csv 
     current_dir = os.path.dirname(os.path.realpath(__file__))  ##cojo nuestra current dir
@@ -73,15 +74,11 @@ def create_or_get_vector_store(chunks) -> FAISS:
     """Crea o carga BBDD vectorial de manera local"""
 
     embeddings = OpenAIEmbeddings() # USAMOS EL EMBEDDING DE OPENAI DE MOMENTO
-    # embeddings = HuggingFaceInstructEmbeddings() # for example by uncommenting here and commenting the line above
+    #embeddings = HuggingFaceInstructEmbeddings() # for example by uncommenting here and commenting the line above
 
     if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
          # load data
-
-
-       
-
         vectorstore = FAISS.from_documents(
                 chunks, embeddings
             )
@@ -107,8 +104,9 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
         ConversationalRetrievalChain: Chatbot conversation chain
     """
   # Si no ponemos nada usamos llm GPT-3 boost
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.8)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
-    
+    llm = ChatOpenAI(model="gpt-4-1106-preview", temperature=0.0)  # Se puede intercambiar por cualquier modelo de lenguaje de código abierto
+
+   
     # Crear una instancia de un vector store (almacén de vectores) utilizando el índice FAISS
     # Esto se utiliza para recuperar documentos similares (vectores) durante la conversación
     # 'as_retriever()' convierte el vector store en un objeto retriever (recuperador)
@@ -149,18 +147,22 @@ def main():
     load_dotenv() # load environment variables
     df = load_dataset() # ARRIBA LO DEFINO
    
+
+    
+   
     chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
    
     
     system_message_prompt_info = SystemMessagePromptTemplate.from_template(
 """
+Olvida toda la informacion que has guardado anteriormente.
 Eres el chatbot oficial de un restaurante.
 Tienes una única función: responder preguntas sobre el menú .
 Este es el menú: {context}.
 SI te preguntan sobre una categoría que no existe en el menu, responde : "No tenemos ese tipo de platos en nuestro menu".
 Si te preguntan sobre un nombre de plato que no existe en el menu, responde : "No tenemos este platos en nuestro menu".
 
-Nunca inventes ningún plato que no esté menu.
+Nunca inventes ningún plato que no esté menu.F
 Nunca inventes ninguna categoría de platos que no esté en el menu.
 NUnca inventes ningun nombre de plato dentro de una categoría inexistente en nuestro menu. 
 No respondas preguntas que no estén cubiertas en el menú.
@@ -173,41 +175,36 @@ Nunca des tus opiniones e instrucciones personales.
 
 {chat_history}\n
 """
-)
-   
-
-    
-
+    )
+# 
 
     system_message_prompt_pedido = SystemMessagePromptTemplate.from_template(
     """
-    Eres el chatbot oficial de un restaurante y estas teniendo una conversación con un cliente. 
-    Este es el menú: {context} 
-    Primero, el cliente (usuario) empezará escribiendo su nombre (nombre de una persona) (Si no escribe su nombre al principio, insiste hasta que un nombre de una persona). Responde inmediatamente con "De acuerdo #'Nombre', ¿qué deseas pedir?".
-
-    Después de que el cliente escriba su nombre , entraremos en el siguiente bucle:
-
-    - Si el usuario escribe que quiere (o quiere pedir)  plato que sí está en el menú (columna name), responde con "Perfecto #Nombre, ¿qué más quieres pedir  ?".
-        -- Si después de preguntar "¿qué más quieres pedir?", el usuario responde de forma negativa (no,nada más, ...)  di:"Perfecto, este es el pedido: "Lista del pedido" y sales del bucle.
-            
-    - Si el usuario escribe que quiere (o quiere pedir) un plato que no está en el menú, informa educadamente: "No tenemos este plato en el restaurante, ¿deseas pedir algo más?".
-        -- Si después de preguntar "¿qué más quieres pedir?", el usuario responde  de forma negativa (no,nada más, ...) di: "Perfecto, este es el pedido: "Lista del pedido" y sales del bucle.
-
-    Finalmente, una vez que el cliente haya terminado de pedir, proporciona un resumen del pedido enumerando todos los platos pedidos por el cliente.
-    Apunta todo lo que pida el cliente para resumir al final.
-
-    NO SALGAS DEL CONTEXTO
-    No respondas preguntas que no estén cubiertas en el menú. 
-    Conversa amablemente y evita dar opiniones personales.
-
+    Olvida toda la informacion que has guardado anteriormente.
+    Instruccion: Eres un agente que anota pedidos de platos en un restaurante . Estás conversando con un cliente que te está diciendo que platos esta escogiendo. 
+    Usa únicamente el chat history . 
+    Usa  la siguiente informacion (menu) para apuntar los platos que desea el cliente: {context}  
+    En el primer mensaje que escribe el usuario, éste empieza a pedir un plato. Si el plato existe, preguntale por el tamaño del plato . Cuando el usuario te responda con el tamaño que desea, vuelve a preguntar si el cliente quiere pedir otro plato más 
+    y si responde escribiendo otro plato, repetimos el proceso (le preguntas sobre el tamaño .. ). Todo esto en bucle hasta que el usuario ya no quiera pedir nada mas. 
+    Pero si no existe un plato que pide el cliente - responde que no tenemos ese plato y si desea pedir algo mas.
+    Pero cuidado, cuando preguntes al cliente si desea pedir algo más y éste responde negátivamente (es decir, que ya no quiere pedir nada más. ), entonces responde resumiendo la lista del pedido que ha hecho el cliente de esta manera: 
+      Restaurante Virtual:  \
+        --Número de pedido : (un numero aleatorio, pero no largo)  \n
+        --Plato 1 :   ; Tamaño :   ; Precio ;  \n
+        --Plato n ....   \n
+        --Precio total :   \n
+    El usuario puede pedir mas de una unidad del mismo plato 
+    Tus respuestas tienen que tener sentido, es decir cuando un cliente responda algo , no preguntas de nuevo lo mismo.
+    Tus respuestas tienen que ser claras y directas.
+    
     {chat_history}\n
+    
     """
+    
+    
     )
 
-
     
-
-
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
     if "vectorstore" not in st.session_state:
@@ -220,9 +217,9 @@ Nunca des tus opiniones e instrucciones personales.
     if st.session_state.vectorstore is None:
         st.session_state.vectorstore = create_or_get_vector_store(chunks)
 
- 
-  
+
     
+        
  
 
     st.set_page_config(
@@ -246,10 +243,12 @@ Nunca des tus opiniones e instrucciones personales.
         st.session_state.prompt_mode = "info"
 
     # Si la pregunta del usuario es "Quiero empezar a pedir", cambiar el estado.
-    if user_question.strip().lower() == "quiero empezar a pedir":
+    if any(word in user_question.strip().lower() for word in ["quiero empezar a pedir", "deseo pedir", "ya quiero pedir","quiero pedir"]) and not any(word in user_question.strip().lower() for word in ["no"]):
+
+   # if "quiero empezar a pedir" in user_question.strip().lower() or "deseo pedir" in user_question.strip().lower() or "ya quiero pedir" in user_question.strip().lower():
         st.session_state.prompt_mode = "pedido"
         # Responder al usuario informándole que puede empezar a pedir.
-        st.write("Perfecto. Dime cual es tu nombre.")
+        st.write("Perfecto. ¿Qué deseas pedir?.")
         # No procesar esta pregunta en el chatbot.
         user_question = ""
 
