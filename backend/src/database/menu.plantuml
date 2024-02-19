@@ -15,17 +15,12 @@ class VariaciónPlato {
   - ID: int
   - plato_ID: int
   - variacion: string
-  - price: double
-}
-
-class PlatoExtra {
-  - ID: int
-  - plato_ID: int
-  - extras: string
   - precio: double
 }
 
+
+
 Plato "1" -- "1..*" VariaciónPlato : tiene
-Plato "1" -- "1..*" PlatoExtra : tiene
+
 
 @enduml

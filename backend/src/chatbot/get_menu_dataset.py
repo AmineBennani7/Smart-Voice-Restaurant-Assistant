@@ -11,7 +11,10 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["menu"] ##bdbd menu
 collection = db["platos"] ##tabla principal=Platos
 
+
+
 def create_dataset():
+
 
   data = []
 
@@ -26,14 +29,14 @@ def create_dataset():
     category = doc["categoria"]
     description= doc["descripcion"]
     variations = doc["variaciones"]
-    extras = doc["extras"]
+   
 
     d = {
       "name": name,
       "category": category,  
       "description" : description,
       "variations": variations,   
-      "extras": extras
+      
     }
 
     data.append(d)

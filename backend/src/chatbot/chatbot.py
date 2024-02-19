@@ -15,6 +15,7 @@ from langchain.prompts import (
 )
 import streamlit as st
 from langchain.text_splitter import CharacterTextSplitter
+import sys
 
 
 
@@ -30,10 +31,11 @@ def load_dataset(dataset_name="menu_dataset/menus_dataset.csv"):
     file_path = os.path.join(current_dir, dataset_name) #lo uno con \dataset.csv
 
     df = pd.read_csv(file_path) ##leo el csv
+    
     return df
 
 
-def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
+def create_chunks(dataset: pd.DataFrame, chunk_sizee:int, chunk_overlap:int):
    """
    Crea "chunks" (fragmentos) de información a partir del conjunto de datos proporcionado.
    """
@@ -120,12 +122,14 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
     
    
 
-    #memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)   ##REPASAR ESTO 
+    #MODIFICAR LA K SI AÑADIMOS MAS DATOS EN EL CSV
+    retriever1=vector_store.as_retriever()
+    retriever1.search_kwargs = {'k':45}
     
     # Crear una cadena de recuperación conversacional utilizando LangChain
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
-        retriever=vector_store.as_retriever(),
+        retriever=retriever1,
         memory=memory,
         combine_docs_chain_kwargs={
             "prompt": ChatPromptTemplate.from_messages(
@@ -134,7 +138,9 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
                     human_message,
                 ]
             ),
+       
         },
+       
     )
     
     # Devolver la cadena conversacional creada
@@ -147,24 +153,27 @@ def main():
     load_dotenv() # load environment variables
     df = load_dataset() # ARRIBA LO DEFINO
    
-
+    chunks = create_chunks(df, 2000, 0) ##ARRIBA LO DEFINO 
     
-   
-    chunks = create_chunks(df, 1000, 0) ##ARRIBA LO DEFINO 
-   
+
     
     system_message_prompt_info = SystemMessagePromptTemplate.from_template(
 """
 Olvida toda la informacion que has guardado anteriormente.
 Eres el chatbot oficial de un restaurante.
 Tienes una única función: responder preguntas sobre el menú .
-Este es el menú: {context}.
+Empieza dando la bienvenida al cliente al restaurante y preguntale si desea pedir o informacion sobre el menu.
+Este es el menú: {context}. 
+Si te preguntan sobre el contenido del menu, solamente nombra las distintas categorías existentes en el menu y luego, pregunta si el cliente quiere mas detalles sobre alguna categoría
 SI te preguntan sobre una categoría que no existe en el menu, responde : "No tenemos ese tipo de platos en nuestro menu".
 Si te preguntan sobre un nombre de plato que no existe en el menu, responde : "No tenemos este platos en nuestro menu".
 
-Nunca inventes ningún plato que no esté menu.F
+Nunca inventes ningún plato que no esté menu.
 Nunca inventes ninguna categoría de platos que no esté en el menu.
 NUnca inventes ningun nombre de plato dentro de una categoría inexistente en nuestro menu. 
+
+Siempre recuerda al cliente que tiene el menu a su disposicion a mano para asi evitar que el chatbot vaya explicando cada uno de los platos.
+Siempre responde muy brevemente y directo.
 No respondas preguntas que no estén cubiertas en el menú.
 Si te hacen preguntas sobre nombres de platos que no existan en el menú, responde: "No tenemos este plato en el restaurante, ¿desea preguntar algo más o empezar a pedir?".
 Si te hacen preguntas sobre nombres de bebidas que no existan en el menú, responde: "No tenemos esta bebida en el restaurante, ¿desea preguntar algo más o empezar a pedir?".
@@ -187,7 +196,7 @@ Nunca des tus opiniones e instrucciones personales.
     En el primer mensaje que escribe el usuario, éste empieza a pedir un plato. Si el plato existe, preguntale por el tamaño del plato . Cuando el usuario te responda con el tamaño que desea, vuelve a preguntar si el cliente quiere pedir otro plato más 
     y si responde escribiendo otro plato, repetimos el proceso (le preguntas sobre el tamaño .. ). Todo esto en bucle hasta que el usuario ya no quiera pedir nada mas. 
     Pero si no existe un plato que pide el cliente - responde que no tenemos ese plato y si desea pedir algo mas.
-    Pero cuidado, cuando preguntes al cliente si desea pedir algo más y éste responde negátivamente (es decir, que ya no quiere pedir nada más. ), entonces responde resumiendo la lista del pedido que ha hecho el cliente de esta manera: 
+    Pero cuidado, cuando preguntes al cliente si desea pedir algo más y éste te responda que ya no quiere pedir nada más (es decir, que ya no quiere pedir nada más o algo similar ), entonces escribe directamente un resumen la lista del pedido que ha hecho el cliente de esta manera: 
       Restaurante Virtual:  \
         --Número de pedido : (un numero aleatorio, pero no largo)  \n
         --Plato 1 :   ; Tamaño :   ; Precio ;  \n
@@ -216,8 +225,10 @@ Nunca des tus opiniones e instrucciones personales.
 
     if st.session_state.vectorstore is None:
         st.session_state.vectorstore = create_or_get_vector_store(chunks)
-
-
+        
+    
+   
+ 
     
         
  
@@ -259,10 +270,12 @@ Nunca des tus opiniones e instrucciones personales.
     else:
         system_message_prompt = system_message_prompt_pedido
     
-    #print(st.session_state.prompt_mode)
     st.session_state.conversation = get_conversation_chain(
         st.session_state.vectorstore, system_message_prompt, human_message_prompt
     )
+
+    
+    
 
 
 
@@ -288,6 +301,22 @@ def handle_style_and_responses(user_question: str) -> None:
     response = st.session_state.conversation({"question": user_question})
     st.session_state.chat_history = response["chat_history"]
 
+
+    #IMPRIMIR TICKET EN LA CONSOLA AL FINAL 
+    if st.session_state.chat_history is not None:
+        # Obtener el último mensaje de la conversación
+        last_message = st.session_state.chat_history[-1]
+        if "Número de pedido" in last_message.content:
+            print("Último mensaje:", last_message.content)
+            sys.exit()
+           
+
+
+
+    
+
+    
+
     # Actualiza y almacena la memoria en el estado de la sesión
     st.session_state.conversation_memory = st.session_state.conversation.memory
 
@@ -305,6 +334,9 @@ def handle_style_and_responses(user_question: str) -> None:
                 f"<p style='text-align: left;'><b>Chatbot</b></p> <p style='text-align: left;{chatbot_style}'> <i>{message.content}</i> </p>",
                 unsafe_allow_html=True,
             )
+
+
+
 
 if __name__ == "__main__":
     main()
