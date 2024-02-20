@@ -4,23 +4,35 @@ skinparam classBorderColor Blue
 skinparam classFontName Comic Sans 
 skinparam classFontSize 20
 
-class Plato {
-  - ID: int
-  - categoría: string
-  - nombre: string
-  - descripcion: string
+class Dish {
+  - _id: int
+  - category: String
+  - dish_name: String
+  - description: String
 }
 
-class VariaciónPlato {
-  - ID: int
-  - plato_ID: int
-  - variacion: string
-  - precio: double
+class DishVariation {
+  - _id: int
+  - variation: String
+  - price: double
 }
 
+class Ticket {
+  - _id: int
+  - orderNumber: int
+  - dishes: List<DishDetail>
+  - totalAmount: double
+}
 
+class DishDetail {
+  - _id: int
+  - dishName: String
+  - size: String
+  - price: double
+  - numberOfDishes: int 
+}
 
-Plato "1" -- "1..*" VariaciónPlato : tiene
-
+Dish "1" --o "1..*" DishVariation : contains
+Ticket "1" --o "1..*" DishDetail : contains
 
 @enduml

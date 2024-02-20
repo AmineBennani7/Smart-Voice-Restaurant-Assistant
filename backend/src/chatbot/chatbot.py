@@ -14,11 +14,9 @@ from langchain.prompts import (
     SystemMessagePromptTemplate,
 )
 import streamlit as st
-from langchain.text_splitter import CharacterTextSplitter
 import sys
-
-
-
+import re
+from pymongo import MongoClient
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -196,11 +194,11 @@ Nunca des tus opiniones e instrucciones personales.
     En el primer mensaje que escribe el usuario, éste empieza a pedir un plato. Si el plato existe, preguntale por el tamaño del plato . Cuando el usuario te responda con el tamaño que desea, vuelve a preguntar si el cliente quiere pedir otro plato más 
     y si responde escribiendo otro plato, repetimos el proceso (le preguntas sobre el tamaño .. ). Todo esto en bucle hasta que el usuario ya no quiera pedir nada mas. 
     Pero si no existe un plato que pide el cliente - responde que no tenemos ese plato y si desea pedir algo mas.
-    Pero cuidado, cuando preguntes al cliente si desea pedir algo más y éste te responda que ya no quiere pedir nada más (es decir, que ya no quiere pedir nada más o algo similar ), entonces escribe directamente un resumen la lista del pedido que ha hecho el cliente de esta manera: 
+    Cuando el usuario escriba que ya no quiere pedir nada más (es decir, que ya no quiere pedir nada más o algo similar ), entonces escribe directamente un resumen la lista del pedido que ha hecho el cliente de esta manera: 
       Restaurante Virtual:  \
         --Número de pedido : (un numero aleatorio, pero no largo)  \n
-        --Plato 1 :   ; Tamaño :   ; Precio ;  \n
-        --Plato n ....   \n
+        --Plato 1 :   ; Tamaño :   ; Precio : ; Cantidad : \n
+        --Plato n : ....   \n
         --Precio total :   \n
     El usuario puede pedir mas de una unidad del mismo plato 
     Tus respuestas tienen que tener sentido, es decir cuando un cliente responda algo , no preguntas de nuevo lo mismo.
@@ -230,9 +228,7 @@ Nunca des tus opiniones e instrucciones personales.
    
  
     
-        
- 
-
+    
     st.set_page_config(
         page_title="Chatbot del Menú del Restaurante",
         page_icon=":fork_and_knife:",
@@ -274,12 +270,6 @@ Nunca des tus opiniones e instrucciones personales.
         st.session_state.vectorstore, system_message_prompt, human_message_prompt
     )
 
-    
-    
-
-
-
-  
     with st.spinner("Processing..."):
         if user_question:
             handle_style_and_responses(user_question)  ##ES LO DE CSS DE ABAJO ... 
@@ -302,20 +292,18 @@ def handle_style_and_responses(user_question: str) -> None:
     st.session_state.chat_history = response["chat_history"]
 
 
-    #IMPRIMIR TICKET EN LA CONSOLA AL FINAL 
+    #IMPRIMIR TICKET EN LA CONSOLA AL FINAL E INSERTAR INFO A LA BBDD
     if st.session_state.chat_history is not None:
         # Obtener el último mensaje de la conversación
         last_message = st.session_state.chat_history[-1]
         if "Número de pedido" in last_message.content:
-            print("Último mensaje:", last_message.content)
+            texto_ticket=last_message.content
+            print("Último mensaje:", texto_ticket)
+            parseo=parse(texto_ticket)
+            insert_bbdd(parseo)
             sys.exit()
+            
            
-
-
-
-    
-
-    
 
     # Actualiza y almacena la memoria en el estado de la sesión
     st.session_state.conversation_memory = st.session_state.conversation.memory
@@ -334,6 +322,38 @@ def handle_style_and_responses(user_question: str) -> None:
                 f"<p style='text-align: left;'><b>Chatbot</b></p> <p style='text-align: left;{chatbot_style}'> <i>{message.content}</i> </p>",
                 unsafe_allow_html=True,
             )
+
+#Del ticket sacado, sacamos el numDePedido, los platos y el precio total para la BBDD
+def parse(texto_ticket):
+        # Expresiones regulares actualizadas para extraer información del ticket
+    patron_numero_pedido = re.compile(r'--\s*Número\s*de\s*pedido\s*:\s*(\d+)')
+    patron_items = re.compile(r'--(Plato|Bebida)\s+(\d+) : (.*?); Tamaño : (.*?); Precio : (.*?); Cantidad : (\d+)')
+    patron_precio_total = re.compile(r'--\s*Precio\s*total\s*:\s*([-+]?\d*\.\d+|\d+)')
+
+    # Extraer información del ticket
+    numero_pedido = int(patron_numero_pedido.search(texto_ticket).group(1))
+    items_matches = patron_items.findall(texto_ticket)
+    items = [{"tipo": match[0], "numero": int(match[1]), "nombre": match[2].strip(), "tamaño": match[3].strip(), "precio": float(match[4]), "cantidad": int(match[5])} for match in items_matches]
+    precio_total = float(patron_precio_total.search(texto_ticket).group(1))
+    # Crear un documento para el ticket
+    ticket_doc = {
+        "numero_pedido": numero_pedido,
+        "platos": [item for item in items if item["tipo"] == "Plato" or item["tipo"] =="Bebida"],
+        "precio_total": precio_total
+    }
+    return ticket_doc
+
+#Insertar en la base de datos
+def insert_bbdd(parseo):
+    client = MongoClient("mongodb://localhost:27017/")  
+    database = client["menu"]
+    tickets_collection = database["tickets"]
+    # Insertar el documento en la colección de tickets
+    tickets_collection.insert_one(parseo)
+
+    # Cerrar la conexión a la base de datos
+    client.close()
+
 
 
 
