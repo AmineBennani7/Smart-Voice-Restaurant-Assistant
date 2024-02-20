@@ -1,5 +1,4 @@
-#################################REQUERIMIENTOS###################################
-
+#################################REQUISITOS###################################
 Usar python 3.10 
 pip install pymongo
 pip install SpeechRecognition
@@ -9,11 +8,8 @@ pip install Wikipedia
 pip install numexpr  
 pip install langchain faiss-cpu openai tiktoken InstructorEmbedding sentence-transformers streamlit python-dotenv pandas trafilatura
 pip install huggingface-hub
-#pip install  chromadb
-
-
 pip install spacy
 python -m spacy download es_core_news_sm
+pip install --upgrade pip 
+pip install -U langchain-openai
 
-#Si uso llama : 
-#pip install ctransformers
