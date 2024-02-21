@@ -1,25 +1,17 @@
-#pip install --upgrade pip 
-# pip install -U langchain-openai
-
-
 from dotenv import load_dotenv
 from langchain.prompts import (
     HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
 )
 import streamlit as st
 from chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, get_conversation_chain,handle_style_and_responses  # Importa las funciones desde utils.py
 from chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido  # Importa las definiciones desde prompts.py
 
 
-
 def main():
-    load_dotenv() # load environment variables
+    load_dotenv() # load environment variables (API_KEY)
     df = load_dataset() # ARRIBA LO DEFINO
    
     chunks = create_chunks(df, 2000, 0) ##ARRIBA LO DEFINO 
-    
-
     
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
@@ -77,16 +69,9 @@ def main():
 
     with st.spinner("Processing..."):
         if user_question:
-            handle_style_and_responses(user_question)  ##ES LO DE CSS DE ABAJO ... 
+            handle_style_and_responses(user_question)  ##Interfaz grafica de streamlit
    
  
-    
-  
-
-
-
-
-
-
+   
 if __name__ == "__main__":
     main()

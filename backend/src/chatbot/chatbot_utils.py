@@ -20,6 +20,7 @@ from pymongo import MongoClient
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from notifTeams import enviar_notificacion_a_teams
 
 
 
@@ -110,12 +111,17 @@ def get_conversation_chain(vector_store: FAISS, system_message:str, human_messag
 
     memory = st.session_state.conversation_memory
     
+    # Cargar el conjunto de datos
+    dataset = load_dataset()
+
+    # Establecer automáticamente el valor de 'k' como el número de líneas en el conjunto de datos
+    k_value = len(dataset)
    
 
     #MODIFICAR LA K SI AÑADIMOS MAS DATOS EN EL CSV
     # 'as_retriever()' convierte el vector store en un objeto retriever (recuperador)
     retriever1=vector_store.as_retriever()
-    retriever1.search_kwargs = {'k':45}
+    retriever1.search_kwargs = {'k':k_value}  #NUMERO DE LINEAS DEL CSV
     
     # Crear una cadena de recuperación conversacional utilizando LangChain
     conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -155,7 +161,8 @@ def parse(texto_ticket):
         "platos": [item for item in items if item["tipo"] == "Plato" or item["tipo"] =="Bebida"],
         "precio_total": precio_total
     }
-    return ticket_doc
+   
+    return ticket_doc #{'numero_pedido': 3749, 'platos': [{'tipo': 'Plato', 'numero': 1, 'nombre': 'Pizza Margarita de la Casa', 'tamaño': 'Regular', 'precio': 6.44, 'cantidad': 1}], 'precio_total': 6.44}
 
 #Insertar en la base de datos
 def insert_bbdd(parseo):
@@ -164,6 +171,9 @@ def insert_bbdd(parseo):
     tickets_collection = database["tickets"]
     # Insertar el documento en la colección de tickets
     tickets_collection.insert_one(parseo)
+
+    enviar_notificacion_a_teams(parseo)  #ENVIAR NOTIFICACOIN A TEAMS CON EL NUEVO PLATO 
+
     # Cerrar la conexión a la base de datos
     client.close()
 
