@@ -191,6 +191,8 @@ def handle_style_and_responses(user_question: str) -> None:
     response = st.session_state.conversation({"question": user_question})
     st.session_state.chat_history = response["chat_history"]
 
+   
+
 
     #IMPRIMIR TICKET EN LA CONSOLA AL FINAL E INSERTAR INFO A LA BBDD
     if st.session_state.chat_history is not None:
@@ -210,6 +212,8 @@ def handle_style_and_responses(user_question: str) -> None:
 
     human_style = "background-color: #e6f7ff; border-radius: 10px; padding: 10px;"
     chatbot_style = "background-color: #f9f9f9; border-radius: 10px; padding: 10px;"
+
+    
 
     for i, message in enumerate(st.session_state.chat_history):
         if i % 2 == 0:

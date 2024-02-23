@@ -8,7 +8,7 @@ class SpeechRecognizer:
 
     def insert_audio(self):
         with sr.Microphone() as source:
-            print("Di algo...")
+            print("Introduce tu petición...")
             audio = self.recognizer.listen(source)
 
         try:

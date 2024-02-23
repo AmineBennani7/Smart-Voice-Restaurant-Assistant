@@ -12,4 +12,11 @@ pip install spacy
 python -m spacy download es_core_news_sm
 pip install --upgrade pip 
 pip install -U langchain-openai
+pip install pymsteams
+
+pip install --upgrade wheel
+pip install gTTS pyttxx playsound
+pip install pydub
+pip install pygame
+
 

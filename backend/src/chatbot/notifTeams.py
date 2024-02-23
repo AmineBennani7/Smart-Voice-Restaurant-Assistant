@@ -26,5 +26,3 @@ def enviar_notificacion_a_teams(ticket_doc):
     # Enviar el mensaje
     myTeamsMessage.send()
 
-
-
