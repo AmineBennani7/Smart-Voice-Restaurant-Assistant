@@ -20,7 +20,7 @@ from pymongo import MongoClient
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from notifTeams import enviar_notificacion_a_teams
+#from notifTeams import enviar_notificacion_a_teams
 
 
 
@@ -172,13 +172,13 @@ def insert_bbdd(parseo):
     # Insertar el documento en la colección de tickets
     tickets_collection.insert_one(parseo)
 
-    enviar_notificacion_a_teams(parseo)  #ENVIAR NOTIFICACOIN A TEAMS CON EL NUEVO PLATO 
+    #enviar_notificacion_a_teams(parseo)  #ENVIAR NOTIFICACOIN A TEAMS CON EL NUEVO PLATO 
 
     # Cerrar la conexión a la base de datos
     client.close()
 
 
-def handle_style_and_responses(user_question: str) -> None:
+def handle_style_and_responses(user_question: str):
 
     """
    Interfaz conversacional con streamlit 
@@ -205,7 +205,7 @@ def handle_style_and_responses(user_question: str) -> None:
             insert_bbdd(parseo)
             sys.exit()
             
-           
+        
 
     # Actualiza y almacena la memoria en el estado de la sesión
     st.session_state.conversation_memory = st.session_state.conversation.memory
@@ -226,6 +226,10 @@ def handle_style_and_responses(user_question: str) -> None:
                 f"<p style='text-align: left;'><b>Chatbot</b></p> <p style='text-align: left;{chatbot_style}'> <i>{message.content}</i> </p>",
                 unsafe_allow_html=True,
             )
+    
+    return (st.session_state.chat_history[-1])   ##DEVUELVE ULTIMA RESPUESTA
+                                                ##SERVIRA PARA LA API 
+    
 
 
 

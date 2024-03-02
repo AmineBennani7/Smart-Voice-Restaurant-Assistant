@@ -10,7 +10,18 @@ import sys
 sys.path.append("..")
 from speech.speechRecognizer import SpeechRecognizer
 from speech.textToSpeech import text_to_speech ,  reproducir_mp3
+import requests
 
+
+
+
+def initialize_session():
+    if "vectorstore" not in st.session_state:
+        st.session_state.vectorstore = None
+    if "conversation" not in st.session_state:
+        st.session_state.conversation = None
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = None
 
 
 def main():
@@ -21,16 +32,13 @@ def main():
     
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     
-    if "vectorstore" not in st.session_state:
-        st.session_state.vectorstore = None
-    if "conversation" not in st.session_state:
-        st.session_state.conversation = None
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = None
+    initialize_session()
 
     if st.session_state.vectorstore is None:
         st.session_state.vectorstore = create_or_get_vector_store(chunks)
-        
+    
+    
+ 
         
     st.set_page_config(
         page_title="Chatbot del Menú del Restaurante",
@@ -40,7 +48,7 @@ def main():
     st.title("Chatbot del Menú del Restaurante")
     st.subheader("Chatea con el chatbot para obtener información sobre el menú del restaurante.")
 
-    st.image("https://images.unsplash.com/photo-1485827404703-89b55fcc595e") # Image taken with credit from Unsplash - ref. Alex Knight
+    st.image("https://images.unsplash.com/photo-1485827404703-89b55fcc595e") 
 
     # Pregunta predeterminada para iniciar la conversación
     first_question = "Buenos días. "
@@ -51,7 +59,7 @@ def main():
     if st.button("Start Voice Recognition"):
         speech_recognizer =SpeechRecognizer()
         user_question = speech_recognizer.insert_audio()
-
+   
 
 
 #Mode "Info" predetermindado    
@@ -87,8 +95,12 @@ def main():
     with st.spinner("Processing..."):
            if user_question:
                 response = handle_style_and_responses(user_question)
+                
+                
+               
                 # Mostrar la respuesta en texto
                 st.write("Chatbot:", response)
+               
 
                 #PASAR DE TEXTO A VOZ EL SPEECH DEL USUARIO 
                 last_message = st.session_state.chat_history[-1]  #content='¡Buenos días! Bienvenido a nuestro restaurante. ¿Desea pedir algo o necesita información sobre nuestro menú?'
