@@ -3,7 +3,7 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 import streamlit as st
-from chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, get_conversation_chain,handle_style_and_responses  # Importa las funciones desde utils.py
+from chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, get_conversation_chain_for_streamlit,handle_style_and_responses  # Importa las funciones desde utils.py
 from chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido  # Importa las definiciones desde prompts.py
 
 import sys
@@ -88,7 +88,7 @@ def main():
     else:
         system_message_prompt = system_message_prompt_pedido
     
-    st.session_state.conversation = get_conversation_chain(
+    st.session_state.conversation = get_conversation_chain_for_streamlit(
         st.session_state.vectorstore, system_message_prompt, human_message_prompt
     )
 

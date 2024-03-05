@@ -21,6 +21,9 @@ from pymongo import MongoClient
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.chains import RetrievalQA
+from langchain.prompts.prompt import PromptTemplate
+
 #from notifTeams import enviar_notificacion_a_teams
 
 
@@ -92,7 +95,7 @@ def create_or_get_vector_store(chunks) -> FAISS:
     return vectorstore
 
 
-def get_conversation_chain(vector_store: FAISS, system_message:str, human_message:str) -> ConversationalRetrievalChain:
+def get_conversation_chain_for_streamlit(vector_store: FAISS, system_message:str, human_message:str) -> ConversationalRetrievalChain:
     """
     Crear una instancia de un vector store (almacén de vectores) utilizando el índice FAISS
     Esto se utiliza para recuperar documentos similares (vectores) durante la conversación
@@ -176,6 +179,35 @@ def insert_bbdd(parseo):
 
     # Cerrar la conexión a la base de datos
     client.close()
+
+
+def calculate_retriever(vector_store,dataset):
+     # Set 'k' value automatically as the number of lines in the dataset
+    k_value = len(dataset)
+    print(k_value)
+  
+    # 'as_retriever()' converts the vector store into a retriever object
+    retriever1 = vector_store.as_retriever()
+    retriever1.search_kwargs = {'k': k_value}  # NUMBER OF LINES OF CSV
+    return retriever1
+
+def get_conversation_chain(retriever1,system_message_prompt,query,memory):
+    prompt = PromptTemplate(
+        input_variables=["history", "context", "question"],
+        template=system_message_prompt,
+)
+
+   
+    retrieval_chain = RetrievalQA.from_chain_type(llm=ChatOpenAI(model="gpt-4-1106-preview", temperature=0.0),
+                                              chain_type='stuff',
+                                              retriever=retriever1,
+                                              chain_type_kwargs={
+                                                  "prompt": prompt,
+                                                  "memory": memory
+                                              })
+    response = retrieval_chain(query)
+    print(response['result'])
+    return(response['result'])
 
 
 
