@@ -10,9 +10,9 @@ import sys
 sys.path.append("..")
 from speech.speechRecognizer import SpeechRecognizer
 from speech.textToSpeech import text_to_speech ,  reproducir_mp3
-import requests
 
 
+##ESTE FICHERO ES DE UN CHATBOT 100% funcional, que usa una interfaz web (streamlit). En el resultado final, no lo usaremos 
 
 
 def initialize_session():
@@ -35,7 +35,7 @@ def main():
     initialize_session()
 
     if st.session_state.vectorstore is None:
-        st.session_state.vectorstore = create_or_get_vector_store(chunks)
+        st.session_state.vectorstore = create_or_get_vector_store(chunks) #base de datos del menu 
     
     
  
@@ -115,3 +115,6 @@ def main():
    
 if __name__ == "__main__":
     main()
+
+
+

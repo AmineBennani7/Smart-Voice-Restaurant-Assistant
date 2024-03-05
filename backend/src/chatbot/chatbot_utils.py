@@ -17,11 +17,11 @@ import streamlit as st
 import sys
 import re
 from pymongo import MongoClient
+
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 #from notifTeams import enviar_notificacion_a_teams
-
 
 
 
@@ -178,7 +178,8 @@ def insert_bbdd(parseo):
     client.close()
 
 
-def handle_style_and_responses(user_question: str):
+
+def handle_style_and_responses(user_question: str) -> None:
 
     """
    Interfaz conversacional con streamlit 
@@ -187,6 +188,7 @@ def handle_style_and_responses(user_question: str):
         user_question (str): User question
     """
     # Después de recibir la respuesta del chatbot
+   
 
     response = st.session_state.conversation({"question": user_question})
     st.session_state.chat_history = response["chat_history"]
@@ -226,9 +228,6 @@ def handle_style_and_responses(user_question: str):
                 f"<p style='text-align: left;'><b>Chatbot</b></p> <p style='text-align: left;{chatbot_style}'> <i>{message.content}</i> </p>",
                 unsafe_allow_html=True,
             )
-    
-    return (st.session_state.chat_history[-1])   ##DEVUELVE ULTIMA RESPUESTA
-                                                ##SERVIRA PARA LA API 
     
 
 

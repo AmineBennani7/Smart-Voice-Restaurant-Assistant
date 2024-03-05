@@ -22,8 +22,8 @@ class SpeechRecognizer:
             return ""
 
 # Uso de la clase (TEST)
-recognizer = SpeechRecognizer()
-recognized_text = recognizer.insert_audio()
-print("Texto reconocido:", recognized_text)
+# recognizer = SpeechRecognizer()
+# recognized_text = recognizer.insert_audio()
+# print("Texto reconocido:", recognized_text)
 
 
