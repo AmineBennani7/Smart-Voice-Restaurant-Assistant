@@ -15,7 +15,7 @@ from speech.textToSpeech import text_to_speech ,  reproducir_mp3
 
 
 
-def initMemoria():
+def initMemoria(): #input_key='question'
     memory = ConversationBufferMemory(
     memory_key="history",
     input_key="question"
@@ -33,6 +33,7 @@ def main():
     vector_store = create_or_get_vector_store(chunks)
     retriever1=calculate_retriever(vector_store,dataset)
     memory=initMemoria()
+    print(memory)
     prompt=system_message_prompt_info #Default prompt
 
 
@@ -41,6 +42,7 @@ def main():
         speech_recognizer =SpeechRecognizer()
         query = speech_recognizer.insert_audio()
         print(query)
+       
         #query=input("Introduce una petición al chatbot : ") #Para escribir la query manualmente
 
         # Si la pregunta del usuario es "Quiero empezar a pedir", cambiar el estado.
@@ -62,9 +64,14 @@ def main():
             insert_bbdd(parseo)
             sys.exit()
 
-        #print(memory.load_memory_variables({})) #Para ver historico de la converacion 
 
-   
+       # print(memory) #chat_memory=ChatMessageHistory(messages=[HumanMessage(content='buenas tardes'), AIMessage(content='¡Bienvenidos a nuestro restaurante! ¿Desean hacer un pedido o quieren información sobre nuestro menú?')]) input_key='question'
+        #print(memory.load_memory_variables({})) #Para ver historialde la converacion 
+       #{'history': 'Human: hola\n
+            #AI: Bienvenido a nuestro restaurante. ¿Desea hacer un pedido o quiere información sobre nuestro menú?\n
+            #Human: qué hay en el menú\
+            #nAI: En nuestro menú tenemos las siguientes categorías: Pizzas, Calzones, Pastas y Bebidas. ¿Desea más detalles sobre alguna categoría en particular?'}
+
    
 if __name__ == "__main__":
     main()

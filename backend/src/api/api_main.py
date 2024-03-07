@@ -1,26 +1,55 @@
-# Primero, crearemos el archivo api.py para la API Flask y definiremos un endpoint para recibir preguntas del usuario y 
-#devolver respuestas del chatbot. Luego, integraremos esto en tu aplicación de Streamlit.
 from flask import Flask, request, jsonify
-import sys
-sys.path.append("..")
-from chatbot.chatbot_utils import  handle_style_and_responses
+from dotenv import load_dotenv
 
-app_flask = Flask(__name__)
+import os
+import sys 
 
-@app_flask.route('/ask', methods=['POST'])
-def ask():
+sys.path.insert(0, 'backend/src/chatbot')
+
+from  chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, parse, insert_bbdd, calculate_retriever, get_conversation_chain 
+from  chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido
+from  chatbot_main import initMemoria
+
+
+app = Flask(__name__)
+
+
+# Inicializar variables globales
+load_dotenv()  # Carga las variables de entorno
+dataset = load_dataset("menu_dataset/menus_dataset.csv")
+chunks = create_chunks(dataset, 2000, 0)
+vector_store = create_or_get_vector_store(chunks)
+retriever = calculate_retriever(vector_store, dataset)
+
+
+...
+memory = initMemoria()  # Ponemos la inicialización fuera de la función del enrutador
+prompt = system_message_prompt_info
+
+...
+
+#SOLICITUD POST teniendo en cuenta el historial de la conversacion (una vez el programa flask apagado, se borra el historial y reinicializa todo)
+@app.route("/chat", methods=["POST"])
+def chat_with_history(): 
+    global memory, prompt  # Declaramos que vamos a utilizar las variables globales "memory" y "prompt"
     data = request.get_json()
+    user_question = data['user_question']
 
-    if 'question' not in data:
-        return jsonify({"error": "Pregunta no proporcionada"}), 400
+    # Si la pregunta del usuario es "Quiero empezar a pedir", cambiar el estado.
+    if any(word in user_question.strip().lower() for word in ["quiero empezar a pedir", "deseo pedir", "ya quiero pedir","quiero pedir"]) and not any(word in user_question.strip().lower() for word in ["no"]):
+        prompt = system_message_prompt_pedido
 
-    user_question = data['question']
-    response = handle_style_and_responses(user_question)
+    try:
+        response = get_conversation_chain(retriever, prompt, user_question, memory)    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500  
 
-    return jsonify({"response": response})
-
-def start_flask_app_in_thread():
-    app_flask.run(port=8888)
+    chat_history = [{'message': message.content, 'type': type(message).__name__} for message in memory.chat_memory.messages]
+    return jsonify({"response": response, "chat_history": chat_history})
 
 if __name__ == '__main__':
-    start_flask_app_in_thread()
+    app.run(debug=True)
+
+
+
+
