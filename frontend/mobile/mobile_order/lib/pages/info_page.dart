@@ -4,6 +4,7 @@ import 'package:mobile_order/components/button_info.dart';
 
 
 
+
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
 
@@ -11,7 +12,21 @@ class InfoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor:const  Color.fromARGB(255, 252, 252, 242),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0, // Elimina la sombra del app bar
+        
+        leading: IconButton(
+          padding: const EdgeInsets.only(left: 40.0),
+          icon: Icon(Icons.arrow_back),
+          iconSize: 30.0,
+          onPressed: () {
+            Navigator.of(context).pop(); // Vuelve atrás al presionar el botón
+          },
+        ),
+      ),
       body: 
+      
       
       //Logo pequeño
       Padding(

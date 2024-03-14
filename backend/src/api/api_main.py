@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 
 import os
 import sys 
@@ -12,6 +14,10 @@ from  chatbot_main import initMemoria
 
 
 app = Flask(__name__)
+CORS(app)
+
+
+
 
 
 # Inicializar variables globales

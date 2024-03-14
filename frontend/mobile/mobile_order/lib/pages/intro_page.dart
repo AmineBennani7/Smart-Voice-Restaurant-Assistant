@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_order/components/button_intro.dart';
 
+
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
 
