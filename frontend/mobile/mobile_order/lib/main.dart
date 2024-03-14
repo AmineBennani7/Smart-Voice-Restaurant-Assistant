@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_order/pages/conversationpage.dart';
+import 'package:mobile_order/pages/conversation_page.dart';
 import 'package:mobile_order/pages/info_page.dart';
 import 'package:mobile_order/pages/intro_page.dart';
 
