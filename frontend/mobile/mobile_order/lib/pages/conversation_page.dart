@@ -18,85 +18,84 @@ class _ConversationPageState extends State<ConversationPage> {
   final FlutterTts flutterTts = FlutterTts();
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 252, 252, 242),
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        padding: const EdgeInsets.only(left: 16.0),
-        icon: Icon(Icons.arrow_back),
-        iconSize: 30.0,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 252, 252, 242),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          padding: const EdgeInsets.only(left: 16.0),
+          icon: Icon(Icons.arrow_back),
+          iconSize: 30.0,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
-    ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    floatingActionButton: GestureDetector(
-      onTap: toggleListening,
-      child: AvatarGlow(
-        startDelay: const Duration(milliseconds: 10),
-        glowColor: const Color.fromARGB(255, 44, 37, 37),
-        glowShape: BoxShape.circle,
-        curve: Curves.fastOutSlowIn,
-        animate: isRecording,
-        duration: const Duration(milliseconds: 1500),
-        child: Material(
-          elevation: 8.0,
-          shape: const CircleBorder(),
-          color: isRecording
-              ? Colors.red
-              : const Color.fromARGB(255, 222, 167, 72),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Image.asset(
-              'lib/images/microphone.png',
-              width: 80.0,
-              height: 80.0,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: GestureDetector(
+        onTap: toggleListening,
+        child: AvatarGlow(
+          startDelay: const Duration(milliseconds: 10),
+          glowColor: const Color.fromARGB(255, 44, 37, 37),
+          glowShape: BoxShape.circle,
+          curve: Curves.fastOutSlowIn,
+          animate: isRecording,
+          duration: const Duration(milliseconds: 1500),
+          child: Material(
+            elevation: 8.0,
+            shape: const CircleBorder(),
+            color: isRecording
+                ? Colors.red
+                : const Color.fromARGB(255, 222, 167, 72),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset(
+                'lib/images/microphone.png',
+                width: 80.0,
+                height: 80.0,
+              ),
             ),
           ),
         ),
       ),
-    ),
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 12.0),
-            Align(
-              alignment: Alignment.center,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: Image.asset(
-                  'lib/images/pizza.png',
-                  width: 70.0,
-                  height: 60.0,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 12.0),
+              Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: Image.asset(
+                    'lib/images/pizza.png',
+                    width: 70.0,
+                    height: 60.0,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 40.0),
-            Text(
-              'Conversa con nuestro chatbot :',
-              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 40.0),
-            Text(
-              textSpeech,
-              style: TextStyle(fontSize: 25.0),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              SizedBox(height: 40.0),
+              Text(
+                'Conversa con nuestro chatbot :',
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 40.0),
+              Text(
+                textSpeech,
+                style: TextStyle(fontSize: 25.0),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   void toggleListening() async {
     setState(() {
@@ -108,12 +107,8 @@ Widget build(BuildContext context) {
       bool isServiceAvailable = await SpeechToTextGoogleDialog.getInstance()
           .showGoogleDialog(
         onTextReceived: (data) async {
-          setState(() {
-            textSpeech = data.toString();
-          });
-
           // Enviar solicitud POST al servidor
-          await sendTextToAPI(textSpeech);
+          await sendTextToAPI(data.toString());
         },
         locale: "es-ES",
       );
@@ -142,8 +137,10 @@ Widget build(BuildContext context) {
     );
 
     if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final botResponse = responseData["response"];
       setState(() {
-        textSpeech = json.decode(response.body)["response"];
+        textSpeech = botResponse; // Actualiza el estado solo con la respuesta del chatbot
       });
 
       await flutterTts.setLanguage('es-ES');
