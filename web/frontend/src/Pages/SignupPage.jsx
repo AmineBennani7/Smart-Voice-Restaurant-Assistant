@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import './LoginSignup.css';
-import ajustes from '../../Assets/ajustes.png';
-import password from '../../Assets/password.png';
-import usuario from '../../Assets/usuario.png';
-import telefono from '../../Assets/ring-phone.png';
-import correo from '../../Assets/correo-electronico.png';
+import '../Components/LoginSignup.css';
+import ajustes from '../Assets/ajustes.png';
+import password from '../Assets/password.png';
+import usuario from '../Assets/usuario.png';
+import telefono from '../Assets/ring-phone.png';
+import correo from '../Assets/correo-electronico.png';
+import { validateFormData, validateEmail, phoneNumberPattern } from '../utils/signupValidator';
 
 import { Link } from 'react-router-dom';
 
@@ -26,6 +27,11 @@ const Signup = () => {
   // Conexión con flask api para resgistrarse
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validar los campos del formulario
+    if (!validateFormData(formData)) { 
+
+      return;
+    }
     try {
       const response = await fetch('http://localhost:5000/signup', {
         method: 'POST',
@@ -40,6 +46,8 @@ const Signup = () => {
       console.error('Error al enviar el formulario:', error);
     }
   };
+
+  
 
   return (
     <div className='container'>

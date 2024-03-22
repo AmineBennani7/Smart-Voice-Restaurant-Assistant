@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import './LoginSignup.css';
-import password from '../../Assets/password.png';
-import usuario from '../../Assets/usuario.png';
+import '../Components/LoginSignup.css';
+import password from '../Assets/password.png';
+import usuario from '../Assets/usuario.png';
+
 import { Link } from 'react-router-dom';
 
 
