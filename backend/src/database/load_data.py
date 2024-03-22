@@ -57,7 +57,7 @@ def load_data():
     },
     
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Margarita de la Casa",
         "descripcion": "Contiene gluten y lácteos",
         "variaciones": [
@@ -66,7 +66,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza York y Queso",
         "descripcion": "Contiene gluten y lácteos",
         "variaciones": [
@@ -75,7 +75,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Atún y Bacon",
         "descripcion": "Contiene gluten, lacteos, pescado y soja",
         "variaciones": [
@@ -84,7 +84,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Atún y York",
         "descripcion": "Contiene gluten, pescado y lácteos",
         "variaciones": [
@@ -93,7 +93,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Cheddar y Bacon",
         "descripcion": "Contiene gluten, lácteos y soja",
         "variaciones": [
@@ -102,7 +102,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Doble Pepperoni",
         "descripcion": "Contiene gluten, soja, lácteos y mostaza",
         "variaciones": [
@@ -111,7 +111,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Cuatro Estaciones",
         "descripcion": "Cebolla, pimiento, champiñones y jamón york",
         "variaciones": [
@@ -120,7 +120,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Carbonara Francesa",
         "descripcion": "Crema carbonara francesa con nata, bacon, cebolla y champiñon",
         "variaciones": [
@@ -129,7 +129,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Cuatro Queso",
         "descripcion": "Con mozzarella, cheddar, queso azul y queso de cabra",
         "variaciones": [
@@ -138,7 +138,7 @@ def load_data():
         ],
     },
     {
-        "categoria": "Pizza",
+        "categoria": "Pizza clásica",
         "nombre": "Pizza Serrana",
         "descripcion": "Tomate natural, cebolla, bacon, ajo asado, aove y jamón serrano",
         "variaciones": [

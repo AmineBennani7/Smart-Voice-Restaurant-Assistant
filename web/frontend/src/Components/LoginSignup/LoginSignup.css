@@ -1,0 +1,132 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    width: 90%; 
+    max-width: 600px; 
+    margin: 100px auto 50px; 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.text {
+    color: blue;
+    font-size: 36px; 
+    font-weight: bold;
+}
+
+.underline {
+    width: 50%;
+    height: 4px;
+    background: blueviolet;
+    border-radius: 2px;
+}
+
+.inputs {
+    margin-top: 40px; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%; 
+    max-width: 500px; 
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+    background: skyblue;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.input img {
+    margin: 0 15px; 
+}
+
+.input input {
+    flex: 1;
+    height: 100%;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: transparent;
+    
+    font-size: 16px; 
+
+    
+}
+
+
+.forgot-password, .signup-link {
+    margin-top: 20px;
+    color: #676767;
+    font-size: 14px; 
+}
+
+.submit-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.submit {
+    width: 200px;
+    height: 50px;
+    color: white;
+    background: #4c00b4;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit:hover {
+    background: #320073;
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        margin-top: 50px;
+        margin-bottom: 30px;
+    }
+
+    .text {
+        font-size: 28px;
+    }
+
+    .inputs  {
+        margin-top: 30px;
+    }
+
+    .input {
+        height: 50px;
+    }
+
+    .input img {
+        margin: 0 10px;
+    }
+
+    .input input {
+        font-size: 14px;
+    }
+
+ 
+    .submit-container {
+        margin-top: 30px;
+    }
+
+    .submit {
+        width: 180px;
+        height: 45px;
+        font-size: 16px;
+        line-height: 45px;
+    }
+}

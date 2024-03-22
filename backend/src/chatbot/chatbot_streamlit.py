@@ -6,8 +6,11 @@ import streamlit as st
 from chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, get_conversation_chain_for_streamlit,handle_style_and_responses  # Importa las funciones desde utils.py
 from chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido  # Importa las definiciones desde prompts.py
 
-import sys
-sys.path.append("..")
+import os
+import sys 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
 from speech.speechRecognizer import SpeechRecognizer
 from speech.textToSpeech import text_to_speech ,  reproducir_mp3
 

@@ -2,5 +2,6 @@
 venv/
 .env
 output.mp3
+web/backend/config.py
 
     
