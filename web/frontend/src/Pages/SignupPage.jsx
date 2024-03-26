@@ -1,55 +1,18 @@
 import React, { useState } from 'react';
-import '../Components/LoginSignup.css';
+import '../Components/Styles/LoginSignup.css';
 import ajustes from '../Assets/ajustes.png';
 import password from '../Assets/password.png';
 import usuario from '../Assets/usuario.png';
 import telefono from '../Assets/ring-phone.png';
 import correo from '../Assets/correo-electronico.png';
-import { validateFormData, validateEmail, phoneNumberPattern } from '../utils/signupValidator';
 
 import { Link } from 'react-router-dom';
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
-    fullname: '',
-    lastname: '',
-    username: '',
-    email: '',
-    password: '',
-    phoneNumber: ''
-  });
 
-  // Función para manejar cambios en los campos de entrada
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
-  // Conexión con flask api para resgistrarse
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Validar los campos del formulario
-    if (!validateFormData(formData)) { 
+ 
+const SignupForm = ({ handleSubmit, handleChange, formData }) => (
 
-      return;
-    }
-    try {
-      const response = await fetch('http://localhost:5000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-      console.log(data); // Verificar la respuesta del servidor
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error);
-    }
-  };
-
-  
-
-  return (
     <div className='container'>
       <div className="header">
         <div className="text">Crear cuenta</div>
@@ -92,6 +55,6 @@ const Signup = () => {
       </div>
     </div>
   );
-}
 
-export default Signup;
+
+export default SignupForm;
