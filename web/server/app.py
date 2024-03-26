@@ -61,7 +61,7 @@ def login():
     user = usuarios_collection.find_one({"username": username, "password": password})
     if user:
         access_token = create_access_token(identity=username)
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token,username=username), 200
     else:
         return jsonify({"message": "Credenciales incorrectas"}), 401
 

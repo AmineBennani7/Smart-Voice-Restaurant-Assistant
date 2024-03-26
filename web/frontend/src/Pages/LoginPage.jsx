@@ -23,7 +23,7 @@ const LoginForm = ({ handleChange, handleSubmit, formData }) => (
       </div>
       <div className="submit-container">
         <button type="submit" className="submit">Iniciar sesión</button>
-      </div>z
+      </div>
     </form>
     <div className="forgot-password">
       Contraseña olvidada ? <span>Pulse aquí !</span>
@@ -35,5 +35,4 @@ const LoginForm = ({ handleChange, handleSubmit, formData }) => (
 );
 
 export default LoginForm;
-
 

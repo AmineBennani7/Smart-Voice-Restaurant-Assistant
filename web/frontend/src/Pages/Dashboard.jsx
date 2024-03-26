@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Nav } from 'react-bootstrap';
 // bootstrap import no es necesario aquí
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Components/Styles/Dashboard.css';
-import cooking from '../Assets/cooking.png';
+import  { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Admin from '../Assets/admin.png';
 
 
+const Dashboard = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+    const handleToggleClick = () => {
+      setIsSidebarOpen(!isSidebarOpen);
+    }
+  
+    const navigate = useNavigate();
+    const { username } = useParams();
+  
+    useEffect(() => {
+      const authenticatedUsername = localStorage.getItem("username");
+      if(authenticatedUsername !== username) {
+        navigate('/');
+      }
+    }, [username,navigate]);
 
-
-const SideBar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleToggleClick = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-}
+    //PARA DESCONECTAR
+    const handleLogout = () => {
+        // Borrar los datos de autenticación del almacenamiento local 
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        // Redirigir al usuario a la página de inicio de sesión
+        navigate('/');
+      }
   
 
   return (
@@ -60,18 +79,18 @@ const SideBar = () => {
                 </li>
                
             </ul>
-            <div class="sidebar-footer">
-                <a href="#" class="sidebar-link">
-                    <i class="lni lni-exit"></i>
-                    <span>Cerrar sesión</span>
-                </a>
-            </div>
+            <div className="sidebar-footer">
+            <a href="#" className="sidebar-link" onClick={handleLogout}>
+                <i className="lni lni-exit"></i>
+                <span>Cerrar sesión</span>
+            </a>
+        </div>
         </aside>
         <div className="main p-3">
     <div className="text-center">
         
-        <h1 className="mt-5">Bienvenido Usuario Conectado</h1>
-        <img src={cooking} style={{width: '150px', height: 'auto'}} alt="Cocinero" />
+        <h1 className="mt-5">Bienvenido {username} </h1>
+        <img src={Admin} style={{width: '150px', height: 'auto'}} alt="Cocinero" />
     </div>
 </div>
     </div>
@@ -84,4 +103,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
+export default Dashboard;
