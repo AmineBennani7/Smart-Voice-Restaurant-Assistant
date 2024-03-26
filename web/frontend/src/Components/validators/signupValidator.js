@@ -11,7 +11,7 @@ export const validateFormData = (formData) => {
     return false;
   }
 
-  const { fullname, lastname, username, email, password, phoneNumber } = formData;
+  const { fullname, lastname, username, email, password, phone } = formData;
 
   if (!fullname || !fullname.trim()) {
     alert('Por favor ingresa tu nombre');
@@ -41,11 +41,11 @@ export const validateFormData = (formData) => {
     alert('La contraseña debe tener al menos 8 caracteres');
     return false;
   }
-  if (!phoneNumber || !phoneNumber.trim()) {
+  if (!phone || !phone.trim()) {
     alert('Por favor ingresa tu número de teléfono');
     return false;
   }
-  if (!phoneNumberPattern.test(phoneNumber.trim())) {
+  if (!phoneNumberPattern.test(phone.trim())) {
     alert('Por favor ingresa un número de teléfono válido (9 dígitos sin espacios ni guiones)');
     return false;
   }

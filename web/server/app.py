@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 from config import Config 
 from flask_cors import CORS
+from bson import ObjectId
 
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
@@ -65,11 +66,26 @@ def login():
     else:
         return jsonify({"message": "Credenciales incorrectas"}), 401
 
-@app.route("/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+
+##Tabla de todos los users
+@app.route("/users", methods=["GET"])
+def get_users():
+    users = usuarios_collection.find()
+    result = []
+    for user in users:
+        user["_id"] = str(user["_id"])  # Convertir el objeto id de Mongo en una cadena
+        result.append(user)
+    return jsonify(result)
+
+##Borrar user específico: 
+@app.route("/user/<userid>", methods=["DELETE"])
+def delete_user(userid): 
+    response = usuarios_collection.delete_one({"_id": ObjectId(userid)})
+    
+    if response.deleted_count:
+        return jsonify({"message": "Usuario borrado correctamente"}), 200
+
+    return jsonify({"message": "Usuario no encontrado"}), 404
 
 if __name__ == "__main__":
     app.run(debug=True)

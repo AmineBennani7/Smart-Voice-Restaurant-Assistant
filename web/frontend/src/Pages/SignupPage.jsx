@@ -43,16 +43,14 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => (
           </div>
           <div className="input">
             <img src={telefono} alt="" style={{ width: '30px', height: '30px' }} />
-            <input type="text" name="phoneNumber" placeholder="Número de Teléfono" value={formData.phoneNumber} onChange={handleChange} />
+            <input type="text" name="phone" placeholder="Número de Teléfono" value={formData.phone} onChange={handleChange} />
           </div>
         </div>
         <div className="submit-container">
         <button type="submit" className="submit">Crear cuenta</button>
         </div>
       </form>
-      <div className="forgot-password">
-       ¿Ya posees tu cuenta? <Link to="/">Iniciar sesión</Link>
-      </div>
+      
     </div>
   );
 

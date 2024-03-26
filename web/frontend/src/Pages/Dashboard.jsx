@@ -35,6 +35,8 @@ const Dashboard = () => {
       }
   
 
+
+
   return (
     <body>
     <div class="wrapper">
@@ -50,18 +52,43 @@ const Dashboard = () => {
                 </div>
             </div>
             <ul class="sidebar-nav">
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+            <li class="sidebar-item">
+                    <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
                         <i class="lni lni-user"></i>
-                        <span>Añadir nuevo usuario</span>
+                        <span>Usuarios</span>
                     </a>
+                    <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onClick={() => navigate(`/signup/${username}`)}>
+                    Añadir un nuevo encargado
+                  </a>
+            </li>
+                        <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" onClick={() => navigate(`/userInfo/${username}`)}>
+                            <a href="#" class="sidebar-link">Borrar un encargado</a>
+                            </a>
+                        </li>
+                       
+                    </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
+                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
                         <i class="lni lni-agenda"></i>
-                        <span>Notificaciones cocina</span>
+                        <span>Notificaciones</span>
                     </a>
+                    <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">Notificaciones cocina</a>
+                        </li>
+                      
+                    </ul>
                 </li>
+               
+           
+                
+               
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                         data-bs-target="#auth" aria-expanded="false" aria-controls="auth">

@@ -24,6 +24,11 @@
     border-radius: 2px;
 }
 
+.container {
+    background-color: #eff3f4; 
+  }
+  
+
 .inputs {
     margin-top: 40px; 
     display: flex;

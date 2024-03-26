@@ -25,12 +25,7 @@ const LoginForm = ({ handleChange, handleSubmit, formData }) => (
         <button type="submit" className="submit">Iniciar sesión</button>
       </div>
     </form>
-    <div className="forgot-password">
-      Contraseña olvidada ? <span>Pulse aquí !</span>
-    </div>
-    <div className="signup-link">
-      Crea tu cuenta aquí: <Link to="/signup">Registrarse</Link>
-    </div>
+   
   </div>
 );
 
