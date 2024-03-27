@@ -87,6 +87,34 @@ def delete_user(userid):
 
     return jsonify({"message": "Usuario no encontrado"}), 404
 
+
+
+
+
+################################INFORMACIÓN SOBRE EL MENU  ##################################
+client_db = client["client"]
+platos_collection = database["platos"]
+
+#Lista de todos los platos del menu
+@app.route("/platos", methods=["GET"])
+def get_all_platos():
+    platos = platos_collection.find()
+    result = []
+    for plato in platos:
+        plato["_id"] = str(plato["_id"])  # Convertimos el objectid a string
+        result.append(plato)
+    return jsonify(result)
+
+#Eliminar plato específico: 
+@app.route("/platos/<plato_id>", methods=["DELETE"])
+def delete_plato(plato_id): 
+    response = platos_collection.delete_one({"_id": ObjectId(plato_id)})
+    
+    if response.deleted_count:
+        return jsonify({"message": "Plato borrado correctamente"}), 200
+
+    return jsonify({"message": "Plato no encontrado"}), 404
+
 if __name__ == "__main__":
     app.run(debug=True)
   
