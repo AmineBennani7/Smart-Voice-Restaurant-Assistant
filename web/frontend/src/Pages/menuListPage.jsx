@@ -3,100 +3,10 @@ import { Table, Button, Modal, Form, Tooltip, OverlayTrigger } from 'react-boots
 import { useNavigate , useParams } from 'react-router-dom';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
 
-const MenuList = () => {
-    
-    const [platos, setPlatos] = useState([]); //Almacena la lista de platos
-    const [show, setShow] = useState(false); //Controla la visibilidad del modal para añadir nuevos platos
-    const [nuevoPlato, setNuevoPlato] = useState({ nombre: '', descripcion: '', categoria: '', variaciones: [] }); //almacena los detalles del uevo plato
-
-    //Es dereact-router-dmm para obtener el parametro del URL de username 
-    const navigate = useNavigate();
-    const { username } = useParams();
-
-
-    const handleClose = () => setShow(false);
-
-
-//CONTROLADOR para agregar un nuevo plato
-const handleAdd = (e) => {
-    e.preventDefault();
-    fetch(`http://localhost:5000/platos`, {   //Va a la API de platos y realiza post
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(nuevoPlato) //convierte el objeto nuevoPlato a formato JSON
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message);
-            });
-        }
-        return response;
-    })
-    .then(() => {  //Si todo es correcto, rienici el estado de nuevoPLato a vacio y nos reinicia la pagina con el nuevo plato añadido
-        setShow(false);
-        setNuevoPlato({ nombre: '', descripcion: '', categoria: '', variaciones: [] });
-        window.location.reload();
-    })
-    .catch((error) => {
-        alert(error.message);
-    });
-}
-   
-
-    const handleDelete = (idPlato) => {    
-        if (window.confirm('¿Estás seguro que quieres borrar este plato?')) {
-            fetch(`http://localhost:5000/platos/${idPlato}`, {
-                method: 'DELETE',
-            })
-            .then(() => {
-                setPlatos(platos.filter(plato => plato._id !== idPlato));
-                alert("Plato borrado con éxito");
-            })
-            .catch(() => {
-                alert('Hubo un error al intentar borrar este plato');
-            });
-        }
-    }
-    useEffect(() => {
-        const authenticatedUsername = localStorage.getItem("username");
-        if (authenticatedUsername !== username) {
-            navigate('/');
-        }
-    }, [username, navigate]);
-
-    useEffect(() => {
-        fetch('http://localhost:5000/platos')
-        .then(response => response.json())
-        .then(data => setPlatos(data));
-    }, []);
-
-    const handleShow = () => {
-        // Reset plate and variations when the modal opens
-        setNuevoPlato({nombre: '', descripcion: '', categoria: '', variaciones: [{tipo:'', precio:''}]});
-        setShow(true);
-    }
-
-
-    const handleVariationChange = (index, field, value) => {
-        let newVariations = [...nuevoPlato.variaciones];
-        newVariations[index][field] = value;
-    
-        setNuevoPlato(prevState => { 
-            return {...prevState, variaciones: newVariations} 
-        });
-    };
-            
-    const addNewVariation = () => {
-        setNuevoPlato(prevState => { 
-            return {...prevState, variaciones: [...prevState.variaciones, {tipo: '', precio: ''}]} 
-        });
-    };
 
     
-    return (
+const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoPlato, setNuevoPlato, handleVariationChange, addNewVariation, handleDelete, navigate, username }) => (
+
         <div className="container" style={{ marginTop: '2em', marginBottom: '2em' }}>
              <div style={{display: 'flex', alignItems: 'center'}}>
                 <Button variant="light" onClick={() => navigate(`/dashboard/${username}`)} style={{border: 'none'}}><ArrowLeft size={36} /></Button>
@@ -192,6 +102,6 @@ const handleAdd = (e) => {
             </Table>
         </div>
     );
-                                }       
+                                     
 
-export default MenuList;
+export default MenuListForm;

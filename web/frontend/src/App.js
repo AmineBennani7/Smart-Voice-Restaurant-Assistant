@@ -4,7 +4,7 @@ import Login from "./Components/Login";
 import SignUpPage from "./Components/Signup";
 import Dashboard from "./Pages/Dashboard";
 import UsuariosInfo from "./Pages/infoUser"
-import MenuList from "./Pages/menuList"
+import MenuList from "./Components/menuList"
 
 const App = () => {
   return (
