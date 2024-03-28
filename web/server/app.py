@@ -3,6 +3,10 @@ from pymongo import MongoClient
 from config import Config 
 from flask_cors import CORS
 from bson import ObjectId
+import os
+
+import subprocess
+
 
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
@@ -105,12 +109,21 @@ def get_all_platos():
         result.append(plato)
     return jsonify(result)
 
+
+##get_menu_dataset.py --> PARA poner el menu del dataset en el csv actualizado
+def refresh_csv():
+    script_path = os.path.join(os.path.dirname(__file__), "../../backend/src/chatbot/get_menu_dataset.py")
+    subprocess.call(["python", script_path])
+
+
 #Eliminar plato específico: 
 @app.route("/platos/<plato_id>", methods=["DELETE"])
 def delete_plato(plato_id): 
     response = platos_collection.delete_one({"_id": ObjectId(plato_id)})
     
     if response.deleted_count:
+        refresh_csv()
+
         return jsonify({"message": "Plato borrado correctamente"}), 200
 
     return jsonify({"message": "Plato no encontrado"}), 404
@@ -129,7 +142,12 @@ def add_plato():
         return jsonify({"message": "El nombre del plato ya está en uso"}), 400
 
     if not nombre or not categoria or not variaciones:
-        return jsonify({"message": "Los campos nombre, caregoría y variaciones tienen que estar rellenos"}), 400
+        return jsonify({"message": "Los campos nombre, categoría y variaciones tienen que estar rellenos"}), 400
+
+    # Verificar si todos los precios de las variaciones son positivos
+    for variacion in variaciones:
+        if 'precio' in variacion and float(variacion['precio']) <= 0:
+            return jsonify({"message": "Inserta un precio mayor que cero"}), 400
 
     new_plato = {
         "nombre": nombre,
@@ -139,8 +157,11 @@ def add_plato():
     }
 
     platos_collection.insert_one(new_plato)
+    
+    refresh_csv()
 
     return jsonify({"message": "Plato añadido correctamente"}), 201
 if __name__ == "__main__":
     app.run(debug=True)
+  
   

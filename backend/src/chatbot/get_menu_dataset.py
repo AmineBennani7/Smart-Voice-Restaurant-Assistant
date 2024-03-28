@@ -14,6 +14,12 @@ collection = db["platos"] ##tabla principal=Platos
 
 
 def create_dataset():
+   # Eliminar archivo CSV si existe
+  current_dir = os.path.dirname(os.path.abspath(__file__))
+  data_dir = os.path.join(current_dir, "..", "chatbot")
+  output_file = os.path.join(data_dir, "menu_dataset", "menus_dataset.csv")
+  if os.path.exists(output_file):
+        os.remove(output_file)
 
 
   data = []

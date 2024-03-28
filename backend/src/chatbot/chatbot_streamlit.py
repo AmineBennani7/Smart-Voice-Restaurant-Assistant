@@ -29,9 +29,9 @@ def initialize_session():
 
 def main():
     load_dotenv() # load environment variables (API_KEY)
-    df = load_dataset() # ARRIBA LO DEFINO
+    df = load_dataset() # 
    
-    chunks = create_chunks(df, 2000, 0) ##ARRIBA LO DEFINO 
+    chunks = create_chunks(df, 2000, 0)  
     
     human_message_prompt = HumanMessagePromptTemplate.from_template("{question}")
     

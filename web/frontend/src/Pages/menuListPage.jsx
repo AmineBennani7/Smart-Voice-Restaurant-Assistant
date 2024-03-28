@@ -52,7 +52,7 @@ const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoP
                                 </Form.Group>
                                 <Form.Group controlId={`variaciones-${index}-precio`}>
                                     <Form.Label>Precio de la variación</Form.Label>
-                                    <Form.Control type="number" placeholder="Price" value={variation.precio} onChange={e => handleVariationChange(index, 'precio', e.target.value)} />
+                                    <Form.Control type="number" placeholder="Price" min="0"  value={variation.precio} onChange={e => handleVariationChange(index, 'precio', e.target.value)} />
                                 </Form.Group>
                                 {/* Línea horizontal */}
                                 {index !== nuevoPlato.variaciones.length - 1 && <hr style={{ borderTop: '2px solid black', marginBottom: '1em' }} />}
