@@ -15,7 +15,7 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => (
 
     <div className='container'>
       <div className="header">
-        <div className="text">Crear cuenta</div>
+        <div className="text">Añadir nuevo empleado</div>
         <div className="underline"></div>
       </div>
      

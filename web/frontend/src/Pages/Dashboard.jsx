@@ -86,9 +86,6 @@ const Dashboard = () => {
                     </ul>
                 </li>
                
-           
-                
-               
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                         data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
@@ -97,10 +94,13 @@ const Dashboard = () => {
                     </a>
                     <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" onClick={() => navigate(`/menuList/${username}`)}>
                             <a href="#" class="sidebar-link">Personalizar menú</a>
+                            </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">Personalizar app móvil</a>
+                            
                         </li>
                     </ul>
                 </li>
@@ -115,8 +115,12 @@ const Dashboard = () => {
         </aside>
         <div className="main p-3">
     <div className="text-center">
+    <div className="header">
+        <div className="text">Bienvenido {username}</div>
+        <div className="h6">Aquí podrás añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</div>
+      </div>
+
         
-        <h1 className="mt-5">Bienvenido {username} </h1>
         <img src={Admin} style={{width: '150px', height: 'auto'}} alt="Cocinero" />
     </div>
 </div>

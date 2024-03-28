@@ -115,6 +115,32 @@ def delete_plato(plato_id):
 
     return jsonify({"message": "Plato no encontrado"}), 404
 
+##AÑADIR NUEVO PLATO
+@app.route("/platos", methods=["POST"])
+def add_plato():
+    data = request.json
+    nombre = data.get("nombre")
+    descripcion = data.get("descripcion")
+    categoria = data.get("categoria")
+    variaciones = data.get("variaciones")
+
+    # Verificar si el nombre del plato ya está en uso
+    if platos_collection.find_one({"nombre": nombre}):
+        return jsonify({"message": "El nombre del plato ya está en uso"}), 400
+
+    if not nombre or not categoria or not variaciones:
+        return jsonify({"message": "Los campos nombre, caregoría y variaciones tienen que estar rellenos"}), 400
+
+    new_plato = {
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "categoria": categoria,
+        "variaciones": variaciones
+    }
+
+    platos_collection.insert_one(new_plato)
+
+    return jsonify({"message": "Plato añadido correctamente"}), 201
 if __name__ == "__main__":
     app.run(debug=True)
   

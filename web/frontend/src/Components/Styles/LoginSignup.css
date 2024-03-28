@@ -12,7 +12,6 @@
 }
 
 .text {
-    color: blue;
     font-size: 36px; 
     font-weight: bold;
 }
@@ -20,7 +19,7 @@
 .underline {
     width: 50%;
     height: 4px;
-    background: blueviolet;
+    background: black;
     border-radius: 2px;
 }
 
