@@ -199,11 +199,12 @@ const handleVariationChange = (index, field, value) => {
             handleVariationChange={handleVariationChange}
             addNewVariation={addNewVariation}
             handleDelete={handleDelete}
-            handleShowEditModal={handleShowEditModal} 
+            handleShowEditModal={handleShowEditModal}
             showEditModal={showEditModal} 
             editPlato={editPlato} 
             setEditPlato={setEditPlato} 
             handleCloseEditModal={handleCloseEditModal} 
+            handleEdit={handleEdit}
             navigate={navigate}
             username={username}
         />
