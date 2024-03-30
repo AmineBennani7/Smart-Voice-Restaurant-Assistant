@@ -4,8 +4,8 @@ from pymongo import MongoClient
 def load_data():
    
     client = MongoClient("mongodb://localhost:27017/")  
-    database = client["menu"]  # Reemplaza con el nombre real de tu base de datos
-    collection = database["platos"]  # Reemplaza con el nombre deseado para tu colección
+    database = client["menu"]  
+    collection = database["platos"]  
   # Eliminar la colección existente
     collection.drop()
  

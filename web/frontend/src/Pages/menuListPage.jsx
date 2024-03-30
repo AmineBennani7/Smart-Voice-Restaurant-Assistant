@@ -5,7 +5,7 @@ import { ArrowLeft } from 'react-bootstrap-icons';
 
 
     
-const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoPlato, setNuevoPlato, handleVariationChange, addNewVariation, handleDelete, navigate, username }) => (
+const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoPlato, setNuevoPlato, handleVariationChange, addNewVariation, handleDelete, handleShowEditModal, showEditModal, editPlato,setEditPlato, handleCloseEditModal,handleEdit,username,navigate }) => (
 
         <div className="container" style={{ marginTop: '2em', marginBottom: '2em' }}>
              <div style={{display: 'flex', alignItems: 'center'}}>
@@ -52,7 +52,7 @@ const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoP
                                 </Form.Group>
                                 <Form.Group controlId={`variaciones-${index}-precio`}>
                                     <Form.Label>Precio de la variación</Form.Label>
-                                    <Form.Control type="number" placeholder="Price" min="0"  value={variation.precio} onChange={e => handleVariationChange(index, 'precio', e.target.value)} />
+                                    <Form.Control type="number" placeholder="Price" min="0" step="any"  value={variation.precio} onChange={e => handleVariationChange(index, 'precio', e.target.value)} />
                                 </Form.Group>
                                 {/* Línea horizontal */}
                                 {index !== nuevoPlato.variaciones.length - 1 && <hr style={{ borderTop: '2px solid black', marginBottom: '1em' }} />}
@@ -71,7 +71,60 @@ const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoP
                     </Form>
                 </Modal.Body>
             </Modal>
-    
+            <Modal show={showEditModal} onHide={handleCloseEditModal}>
+    <Modal.Header closeButton>
+        <Modal.Title>Editar Plato</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+        {/* Formulario para editar el plato */}
+        {editPlato && (
+            <Form onSubmit={handleEdit}>
+                <Form.Group controlId="nombre">
+                    <Form.Label>Nombre del plato</Form.Label>
+                    <Form.Control type="text" placeholder="Dish name" value={editPlato.nombre} onChange={e => setEditPlato(prevState => ({ ...prevState, nombre: e.target.value }))} />
+                </Form.Group>
+                <Form.Group controlId="descripcion">
+                    <Form.Label>Descripción</Form.Label>
+                    <Form.Control type="text" placeholder="Description" value={editPlato.descripcion} onChange={e => setEditPlato(prevState => ({ ...prevState, descripcion: e.target.value }))} />
+                </Form.Group>
+                <Form.Group controlId="categoria">
+                    <Form.Label>Categoría</Form.Label>
+                    <Form.Control type="text" placeholder="Category" value={editPlato.categoria} onChange={e => setEditPlato(prevState => ({ ...prevState, categoria: e.target.value }))} />
+                </Form.Group>
+                <div style={{ fontWeight: 'bold', marginBottom: '1em', textAlign: 'center' }}>
+                    Variaciones
+                    <hr style={{ borderTop: '3px solid black', width: '70%', margin: 'auto' }} />
+                </div>
+                {editPlato.variaciones && editPlato.variaciones.map((variation, index) => (
+                    <div key={index}>
+                        <Form.Group controlId={`variaciones-${index}-variacion`}>
+                            <Form.Label>Tipo de variación</Form.Label>
+                            <Form.Control type="text" placeholder="Type" value={variation.variacion} onChange={e => handleVariationChange(index, 'variacion', e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId={`variaciones-${index}-precio`}>
+                            <Form.Label>Precio de la variación</Form.Label>
+                            <Form.Control type="number" placeholder="Price" min="0" step="any" value={variation.precio} onChange={e => handleVariationChange(index, 'precio', e.target.value)} />
+                        </Form.Group>
+                        {/* Línea horizontal */}
+                        {index !== editPlato.variaciones.length - 1 && <hr style={{ borderTop: '2px solid black', marginBottom: '1em' }} />}
+                    </div>
+                ))}
+                {/* Botón para agregar nueva variación */}
+                <div className="d-flex justify-content-between align-items-center" style={{ marginTop: '1em' }}>
+                    <span>
+                        <Button variant="primary" onClick={addNewVariation}>Añadir nueva variación</Button>
+                        <OverlayTrigger placement="right" overlay={<Tooltip>Pulse en este botón para añadir nuevas variaciones.</Tooltip>}>
+                            <Button variant="info" style={{ marginLeft: '1em' }}>?</Button>
+                        </OverlayTrigger>
+                    </span>
+                    <Button variant="primary" type="submit">Confirmar</Button>
+                </div>
+            </Form>
+        )}
+    </Modal.Body>
+</Modal>
+
+
             <Table responsive="md">
                 <thead>
                     <tr>
@@ -94,8 +147,11 @@ const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoP
                                 ))}
                             </td>
                             <td>
-                                <Button variant="danger" onClick={() => handleDelete(plato._id)}>Borrar</Button>
-                            </td>
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '150px' }}>
+                <Button variant="danger" onClick={() => handleDelete(plato._id)}>Borrar</Button>
+                <Button variant="primary" onClick={() => handleShowEditModal(plato)}>Editar</Button>
+            </div>
+</td>
                         </tr>
                     ))}
                 </tbody>

@@ -160,7 +160,42 @@ def add_plato():
     
     refresh_csv()
 
+
+
     return jsonify({"message": "Plato añadido correctamente"}), 201
+
+
+    ##EDITAR PLATO EXISTENTE
+@app.route("/platos/<plato_id>", methods=["PUT"])
+def edit_plato(plato_id):
+    data = request.json
+    nombre = data.get("nombre")
+    descripcion = data.get("descripcion")
+    categoria = data.get("categoria")
+    variaciones = data.get("variaciones")
+
+    if not nombre or not categoria or not variaciones:
+        return jsonify({"message": "Los campos nombre, categoría y variaciones tienen que estar rellenos"}), 400
+
+    # Verificar si todos los precios de las variaciones son positivos
+    for variacion in variaciones:
+        if 'precio' in variacion and float(variacion['precio']) <= 0:
+            return jsonify({"message": "Inserta un precio mayor que cero"}), 400
+
+    updated_plato = {
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "categoria": categoria,
+        "variaciones": variaciones
+    }
+
+    response = platos_collection.update_one({"_id": ObjectId(plato_id)}, {"$set": updated_plato})
+    
+    if response.modified_count:
+        refresh_csv()
+        return jsonify({"message": "Plato actualizado correctamente"}), 200
+
+    return jsonify({"message": "Plato no encontrado"}), 404
 if __name__ == "__main__":
     app.run(debug=True)
   

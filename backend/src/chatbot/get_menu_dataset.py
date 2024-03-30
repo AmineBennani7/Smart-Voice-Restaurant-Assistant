@@ -25,8 +25,7 @@ def create_dataset():
   data = []
 
   cursor = collection.find()  ##realiza una consulta en todos los elementos de la tablaplatos
-                                ## servira para hacer tqdm (cursor de barra de progreso )
- 
+                                
  
   for doc in tqdm(cursor, total=collection.count_documents({})):  ##tqdm, cursor de barra de progreso
 
@@ -49,7 +48,7 @@ def create_dataset():
    #Finalmente lo añado al dataframe
   df = pd.DataFrame(data)
 
-  # Eliminar filas con datos faltantes  (REPASAR, PUEDE QUE Hayan PLATOS que no tengan extras)
+  # Eliminar filas con datos faltantes  
   df.dropna(inplace=True)
 
   current_dir = os.path.dirname(os.path.abspath(__file__))

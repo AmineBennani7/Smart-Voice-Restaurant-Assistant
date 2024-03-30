@@ -54,11 +54,11 @@ const Dashboard = () => {
             <ul class="sidebar-nav">
             <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                        data-bs-target="#users" aria-expanded="false" aria-controls="users">
                         <i class="lni lni-user"></i>
                         <span>Usuarios</span>
                     </a>
-                    <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <ul id="users" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                     <li class="sidebar-item">
                     <a href="#" class="sidebar-link" onClick={() => navigate(`/signup/${username}`)}>
                     Añadir un nuevo encargado
@@ -66,7 +66,7 @@ const Dashboard = () => {
             </li>
                         <li class="sidebar-item">
                         <a href="#" class="sidebar-link" onClick={() => navigate(`/userInfo/${username}`)}>
-                            <a href="#" class="sidebar-link">Borrar un encargado</a>
+                           Borrar un encargado
                             </a>
                         </li>
                        
@@ -74,11 +74,11 @@ const Dashboard = () => {
                 </li>
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                        data-bs-target="#notifications" aria-expanded="false" aria-controls="notifications">
                         <i class="lni lni-agenda"></i>
                         <span>Notificaciones</span>
                     </a>
-                    <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <ul id="notifications" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">Notificaciones cocina</a>
                         </li>
@@ -88,14 +88,14 @@ const Dashboard = () => {
                
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
-                        data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
+                        data-bs-target="#customizations" aria-expanded="false" aria-controls="customizations">
                         <i class="lni lni-protection"></i>
                         <span>Personalizar</span>
                     </a>
-                    <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <ul id="customizations" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
                         <a href="#" class="sidebar-link" onClick={() => navigate(`/menuList/${username}`)}>
-                            <a href="#" class="sidebar-link">Personalizar menú</a>
+                            Personalizar menú
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -117,7 +117,7 @@ const Dashboard = () => {
     <div className="text-center">
     <div className="header">
         <div className="text">Bienvenido {username}</div>
-        <div className="h6">Aquí podrás añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</div>
+        <div className="h6">Este es el panel de control donde se podrá añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</div>
       </div>
 
         
