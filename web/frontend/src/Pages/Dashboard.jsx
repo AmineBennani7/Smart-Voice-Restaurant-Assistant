@@ -99,7 +99,8 @@ const Dashboard = () => {
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Personalizar app móvil</a>
+                        <a href="#" class="sidebar-link" onClick={() => navigate(`/customizationApp/${username}`)}>
+                           Personalizar app móvil</a>
                             
                         </li>
                     </ul>
@@ -117,11 +118,14 @@ const Dashboard = () => {
     <div className="text-center">
     <div className="header">
         <div className="text">Bienvenido {username}</div>
-        <div className="h6">Este es el panel de control donde se podrá añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</div>
-      </div>
+        <div className="h6">
+        <strong>Este es el panel de control donde se podrá añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</strong>
+        </div>     
+     </div>
+    
 
         
-        <img src={Admin} style={{width: '150px', height: 'auto'}} alt="Cocinero" />
+        <img src={Admin} style={{width: '300px', height: 'auto',  marginTop: '60px'}} alt="Cocinero" />
     </div>
 </div>
     </div>

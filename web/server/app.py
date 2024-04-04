@@ -241,11 +241,7 @@ def edit_plato(plato_id):
 client_db = client["menu"]
 personalizacion_collection = client_db["personalización"]  # Crear una colección para la personalización
 
-
-#EN CASO DE PUT O POST
-
-
-def save_files(imagen=None): 
+def save_files(imagen=None):  #Dado una inagen, retorna su id para guardarla en la bd 
         if imagen: 
             fs = gridfs.GridFS(client_db)
             imagen_id=fs.put(imagen)
@@ -253,21 +249,14 @@ def save_files(imagen=None):
         return None
 
 
-
-
-
-#EN CASO DE GET
-def get_file(file_id):   
+def get_file(file_id):   #Dada una id de un fichero (imagen) en la bd, la devuelve a imagen 
     fs = gridfs.GridFS(client_db)
     try:
         return fs.get(ObjectId(file_id)).read()
     except Exception as err:
         print(f'Error getting file: {err}')
+        
 
-@app.route("/app_customization"+ '/file/<file_id>', methods=['GET'])  #Muestra cotenido de la imagen si pongo id de esa imagen de la bbdd
-def serve_pdf(file_id):
-    photo = get_file(file_id)
-    return send_file(BytesIO(photo), mimetype='application/png', as_attachment=False,)
 
 ##3.1. Obtener la información de personalización de la app móvil
 @app.route("/app_customization", methods=["GET"])
@@ -277,21 +266,25 @@ def get_personalizacion():
         return jsonify(json_util.dumps(personalizacion)), 200
     else:
         return jsonify({"message": "Información de personalización no encontrada"}), 404
+    
+
+#3.2. A partir de la id de una imagen , devuelve en formato PNG 
+@app.route("/app_customization"+ '/file/<file_id>', methods=['GET'])  
+def serve_pdf(file_id):
+    photo = get_file(file_id)
+    return send_file(BytesIO(photo), mimetype='application/png', as_attachment=False,)
 
 
-##3.2. Actualizar la información de personalización de la app móvil
-
+##3.3. Actualizar la información de personalización de la app móvil
 @app.route("/app_customization", methods=["PUT"])
 
 def update_personalizacion():
-    nombre_restaurante = request.form.get("nombre_restaurante")
+    nombre_restaurante = request.form.get("nombre_restaurante") #Request: Saca el contenido del formulario 
     logo_principal_file = request.files['logo_principal'] if 'logo_principal' in request.files else None
     logo_secundario_file = request.files['logo_secundario'] if 'logo_secundario' in request.files else None
 
-    print(f"nombr_restaurante: {nombre_restaurante}")
-    print(f"logo_principal_file: {logo_principal_file}")
-    print(f"logo_secundario_file: {logo_secundario_file}")
-
+   
+    #Si hay un campo vacio en el form, no lo modificamos
     fields_to_set = {}
 
     if nombre_restaurante:
@@ -305,8 +298,6 @@ def update_personalizacion():
         logo_secundario = save_files(logo_secundario_file)
         fields_to_set["logo_secundario"] = logo_secundario
 
-    print(f"fields_to_set: {fields_to_set}")
-
     if fields_to_set:
         result = personalizacion_collection.update_one({}, {"$set": fields_to_set}, upsert=True)
         print(f"Update result: {result}")
@@ -315,10 +306,10 @@ def update_personalizacion():
 
 
 
-##3.3. Añadir una nueva personalizacion (POST) (Aunque no lo usaremos, nos servirá unicamente para probar que todo funciona bien)
+##3.4. Añadir una nueva personalizacion (POST) (Aunque no lo usaremos, nos servirá unicamente para probar que todo funciona bien)
 @app.route("/app_customization", methods=["POST"])
 def create_personalizacion():
-    nombre_restaurante = request.form.get("nombre_restaurante")
+    nombre_restaurante = request.form.get("nombre_restaurante") #Saco los elementos del form 
     logo_principal_file = request.files.get("logo_principal")
     logo_secundario_file = request.files.get("logo_secundario")
 
@@ -326,21 +317,21 @@ def create_personalizacion():
         return jsonify({"message": "Los campos nombre_restaurante, logo_principal y logo_secundario son obligatorios"}), 400
 
     try:
-        logo_principal_funcionOuael = save_files(imagen=logo_principal_file)
-        logo_secundario_funcionOuael = save_files(imagen=logo_secundario_file)
+        logo_principal_id = save_files(imagen=logo_principal_file)
+        logo_secundario_id = save_files(imagen=logo_secundario_file)
     except Exception as e:
         return jsonify({"message": "Error al leer los archivos adjuntos: {}".format(str(e))}), 500
 
     personalizacion_collection.insert_one({
         "nombre_restaurante": nombre_restaurante,
-        "logo_principal": logo_principal_funcionOuael,
-        "logo_secundario": logo_secundario_funcionOuael
+        "logo_principal": logo_principal_id,
+        "logo_secundario": logo_secundario_id
     })
 
     return jsonify({"message": "Información de personalización creada correctamente"}), 201
 
 
-
+#3.5. Sacar unicamente el primer id de nuestra tabla que es la que usaremos para modificar todo. 
 @app.route("/app_customization/primer_oid", methods=["GET"])
 def obtener_primer_oid():
     documento = personalizacion_collection.find_one()
@@ -359,7 +350,3 @@ def obtener_primer_oid():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
