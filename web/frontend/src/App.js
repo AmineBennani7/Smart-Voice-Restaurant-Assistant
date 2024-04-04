@@ -5,6 +5,7 @@ import SignUpPage from "./Components/Signup";
 import Dashboard from "./Pages/Dashboard";
 import UsuariosInfo from "./Pages/infoUser"
 import MenuList from "./Components/menuList"
+import CustomizationForm from "./Pages/customizationPage"
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/signup/:username" element={<SignUpPage />} />
           <Route path="/dashboard/:username" element={<Dashboard />} />
           <Route path="/userInfo/:username" element={<UsuariosInfo />} />
+          <Route path="/customizationApp" element= {<CustomizationForm/>} />
 
 
         </Routes>
