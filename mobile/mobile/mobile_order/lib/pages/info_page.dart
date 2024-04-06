@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_order/components/button_info.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class InfoPage extends StatelessWidget {
   const InfoPage({Key? key});
@@ -27,17 +30,27 @@ class InfoPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-                  child: Image.asset(
-                    'lib/images/pizza.png',
-                    width: 70.0,
-                    height: 60.0,
-                    fit: BoxFit.contain,
-                  ),
-                ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+              child: FutureBuilder<Map<String, dynamic>>(
+                future: fetchCustomization(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.network(
+                      'http://10.0.2.2:5000/app_customization/file/${snapshot.data?['logoSecundario'] ?? ''}',
+                      width: 70.0,
+                      height: 60.0,
+                      fit: BoxFit.contain,
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  return CircularProgressIndicator();
+                },
               ),
+            ),
+          ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Center(
@@ -100,3 +113,29 @@ class InfoPage extends StatelessWidget {
     );
   }
 }
+
+Future<Map<String, dynamic>> fetchCustomization() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:5000/app_customization'));
+
+  if (response.statusCode == 200) {
+    String jsonString = response.body;
+    dynamic decodedJson = jsonDecode('[' + jsonString + ']'); 
+    jsonString = decodedJson[0];
+ 
+    Map<String, dynamic> responseObject = jsonDecode(jsonString);
+  
+    String logoSecundario = responseObject['logo_secundario'];
+
+    return {
+    
+      'logoSecundario': logoSecundario,
+    };
+  } else {
+    throw Exception('Failed to load customization data');
+  }
+}
+
+
+
+
+

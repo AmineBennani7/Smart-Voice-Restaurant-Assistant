@@ -5,6 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
 class ConversationPage extends StatefulWidget {
   const ConversationPage({Key? key}) : super(key: key);
 
@@ -85,13 +86,24 @@ Widget build(BuildContext context) {
               alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.only(right: 15.0),
-                child: Image.asset(
-                  'lib/images/pizza.png',
-                  width: 70.0,
-                  height: 60.0,
-                ),
+               child: FutureBuilder<Map<String, dynamic>>(
+                future: fetchCustomization(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.network(
+                      'http://10.0.2.2:5000/app_customization/file/${snapshot.data?['logoSecundario'] ?? ''}',
+                      width: 70.0,
+                      height: 60.0,
+                      fit: BoxFit.contain,
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  return CircularProgressIndicator();
+                },
               ),
             ),
+          ),
             SizedBox(height: 40.0),
             Text(
               'Conversa con nuestro chatbot :',
@@ -175,5 +187,27 @@ Widget build(BuildContext context) {
         behavior: SnackBarBehavior.floating,
       ));
     }
+  }
+}
+
+
+Future<Map<String, dynamic>> fetchCustomization() async {
+  final response = await http.get(Uri.parse('http://10.0.2.2:5000/app_customization'));
+
+  if (response.statusCode == 200) {
+    String jsonString = response.body;
+    dynamic decodedJson = jsonDecode('[' + jsonString + ']'); 
+    jsonString = decodedJson[0];
+ 
+    Map<String, dynamic> responseObject = jsonDecode(jsonString);
+  
+    String logoSecundario = responseObject['logo_secundario'];
+
+    return {
+    
+      'logoSecundario': logoSecundario,
+    };
+  } else {
+    throw Exception('Failed to load customization data');
   }
 }

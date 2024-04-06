@@ -270,7 +270,7 @@ def get_personalizacion():
 
 #3.2. A partir de la id de una imagen , devuelve en formato PNG 
 @app.route("/app_customization"+ '/file/<file_id>', methods=['GET'])  
-def serve_pdf(file_id):
+def serve_picture(file_id):
     photo = get_file(file_id)
     return send_file(BytesIO(photo), mimetype='application/png', as_attachment=False,)
 

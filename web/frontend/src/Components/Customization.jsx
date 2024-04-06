@@ -116,6 +116,8 @@ return (
     handleModalClose={handleModalClose}
     handleInputChange={handleInputChange}
     handleSaveChanges={handleSaveChanges}
+    username={username}
+    navigate={navigate}
   />
 );
 

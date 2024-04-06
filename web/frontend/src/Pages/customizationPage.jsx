@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Form, Button, Row, Col, Image, Modal } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ArrowLeft } from 'react-bootstrap-icons'; 
 
 const Customization = ({
   handleInputChange,
@@ -11,15 +12,20 @@ const Customization = ({
   logoPrincipalSrc,
   logoSecundarioSrc,
   nombreRestaurante,
-  showModal,
+  showModal,username,navigate
 }) => {
   return (
     <Container>
-      <Row className="mb-3 justify-content-center">
-        <Col>
-          <h2>Personalización de la Aplicación Móvil</h2>
-        </Col>
-      </Row>
+    <div style={{display: 'flex', alignItems: 'center'}}>
+        <Button 
+            variant="light" 
+            onClick={() => navigate(`/dashboard/${username}`)} 
+            style={{border: 'none'}}>
+            <ArrowLeft size={36} />
+        </Button>
+        <h2 className="mb-3 ml-4">Personalización de la Aplicación Móvil</h2>
+    </div>
+
 
       <Row className="mb-3 justify-content-end">
         <Col>
