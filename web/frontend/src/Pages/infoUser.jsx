@@ -50,6 +50,7 @@ const UsuariosInfo = () => {
                 <Button variant="light" onClick={() => navigate(`/dashboard/${username}`)} style={{border: 'none'}}><ArrowLeft size={36} /></Button>
                 <h1 className="my-4 ml-4" style={{marginLeft: '2rem'}}>Información de los encargados</h1>
             </div>
+           
             <Table responsive="md">
                 <thead>
                     <tr>
@@ -76,6 +77,12 @@ const UsuariosInfo = () => {
                     ))}
                 </tbody>
             </Table>
+            <Button 
+              variant="primary" 
+              onClick={() => navigate(`/signup/${username}`)} 
+              style={{margin: "0 auto", display: "block"}}>
+                Añadir un nuevo empleado
+            </Button>
         </div>
     );
 }

@@ -11,11 +11,7 @@ from bson import json_util
 import gridfs
 from io import BytesIO
 import bson 
-
-
-
-
-
+from werkzeug.security import generate_password_hash, check_password_hash
 import base64
 
 import requests
@@ -58,6 +54,8 @@ def signup():
     phone = data.get("phone")
     email = data.get("email")
     password = data.get("password")
+    password_hash = generate_password_hash(password)  # Guardar el hash de la contraseña, no la contraseña en sí
+
     
     # Verificar si el correo electrónico ya está registrado
     if usuarios_collection.find_one({"email": email}):
@@ -73,7 +71,7 @@ def signup():
         "lastname": lastname,
         "phone": phone,
         "email": email,
-        "password": password
+        "password": password_hash
     })
 
     return jsonify({"message": "Usuario registrado exitosamente"}), 200
@@ -89,15 +87,15 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    user = usuarios_collection.find_one({"username": username, "password": password})
-    if user:
+    user = usuarios_collection.find_one({"username": username})
+    if user and check_password_hash(user['password'], password):  # Verificar la contraseña contra el hash almacenado
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token,username=username), 200
     else:
         return jsonify({"message": "Credenciales incorrectas"}), 401
 
 
-##1.3. Obtenr una tabla con todos los usuarios 
+##1.3. Obtener una tabla con todos los usuarios 
     
 @app.route("/users", methods=["GET"])
 def get_users():
