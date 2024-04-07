@@ -6,15 +6,11 @@ from config import Config
 from flask_cors import CORS
 from bson import ObjectId
 import os
-from bson import Binary
 from bson import json_util
 import gridfs
 from io import BytesIO
-import bson 
 from werkzeug.security import generate_password_hash, check_password_hash
-import base64
 
-import requests
 
 import subprocess
 
@@ -371,8 +367,25 @@ def delete_pedido(id):
         return jsonify({"message":"Pedido borrado correctamente"}), 200
     else:
         return jsonify({"message":"Pedido no encontrado"}), 404
+    
+
+
+@app.route("/pedidos", methods=["POST"])
+def add_pedido():
+    info = request.get_json()
+    
+    if info:
+        pedido_id = pedidos_collection.insert_one(info).inserted_id
+        return jsonify({"message": "Pedido agregado correctamente", "_id": str(pedido_id)}), 201
+    else:
+        return jsonify({"message":"Error en la solicitud"}), 400
 
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
+

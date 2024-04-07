@@ -6,36 +6,17 @@ import '../Components/Styles/Dashboard.css';
 import  { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Admin from '../Assets/admin.png';
+import { ToastContainer, toast , Bounce} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
-const Dashboard = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-    const handleToggleClick = () => {
-      setIsSidebarOpen(!isSidebarOpen);
-    }
-  
-    const navigate = useNavigate();
-    const { username } = useParams();
-  
-    useEffect(() => {
-      const authenticatedUsername = localStorage.getItem("username");
-      if(authenticatedUsername !== username) {
-        navigate('/');
-      }
-    }, [username,navigate]);
-
-    //PARA DESCONECTAR
-    const handleLogout = () => {
-        // Borrar los datos de autenticación del almacenamiento local 
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        // Redirigir al usuario a la página de inicio de sesión
-        navigate('/');
-      }
-  
 
 
+
+
+
+
+const dashboardPage = ({ isSidebarOpen, handleToggleClick,tickets, navigate, username,handleLogout }) => {
 
   return (
     <body>
@@ -138,9 +119,10 @@ const Dashboard = () => {
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
+    <ToastContainer />
 </body>
    
   );
 };
 
-export default Dashboard;
+export default dashboardPage;
