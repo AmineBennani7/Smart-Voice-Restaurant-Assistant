@@ -54,7 +54,7 @@ def chat_with_history():
     return jsonify({"response": response, "chat_history": chat_history})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8000)
 
 
 

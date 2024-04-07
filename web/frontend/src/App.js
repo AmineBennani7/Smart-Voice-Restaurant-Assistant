@@ -6,6 +6,7 @@ import Dashboard from "./Pages/Dashboard";
 import UsuariosInfo from "./Pages/infoUser"
 import MenuList from "./Components/menuList"
 import Customization from "./Components/Customization"
+import Orders from "./Components/Order";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/dashboard/:username" element={<Dashboard />} />
           <Route path="/userInfo/:username" element={<UsuariosInfo />} />
           <Route path="/customizationApp/:username" element= {<Customization/>} />
+          <Route path="/orders/:username" element= {<Orders/>} />
 
 
         </Routes>

@@ -80,8 +80,13 @@ const Dashboard = () => {
                     </a>
                     <ul id="notifications" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Notificaciones cocina</a>
+                        <a href="#" class="sidebar-link" onClick={() => navigate(`/orders/${username}`)}>
+                            Notificaciones cocina
+                            </a>
+
+
                         </li>
+
                       
                     </ul>
                 </li>

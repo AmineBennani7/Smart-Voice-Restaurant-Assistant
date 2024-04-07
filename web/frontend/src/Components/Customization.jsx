@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Form, Button, Row, Col, Image, Modal } from 'react-bootstrap';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+
 import CustomizationForm from '../Pages/customizationPage';
 import { useNavigate, useParams } from 'react-router-dom';
 

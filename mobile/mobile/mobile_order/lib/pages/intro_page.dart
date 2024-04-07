@@ -72,12 +72,12 @@ class IntroPage extends StatelessWidget {
 }
 
 Future<Map<String, dynamic>> fetchCustomization() async {
-  final response = await http.get(Uri.parse('http://10.0.2.2:5000/app_customization'));
+  final response = await http.get(Uri.parse('http://10.0.2.2:5000/app_customization')); //Flask api (react)
 
   if (response.statusCode == 200) {
     String jsonString = response.body;
-    dynamic decodedJson = jsonDecode('[' + jsonString + ']'); 
-    jsonString = decodedJson[0];
+    dynamic decodedJson = jsonDecode('[' + jsonString + ']'); //Lo metemos en una lista y abajo sacamos solo el elemento 0
+    jsonString = decodedJson[0];  //Lo hacemos asi ya que el formato json contiene "" al principio y al final y esta es una buena solucion para quitarlos
  
     Map<String, dynamic> responseObject = jsonDecode(jsonString);
     String nombreRestaurante = responseObject['nombre_restaurante'];

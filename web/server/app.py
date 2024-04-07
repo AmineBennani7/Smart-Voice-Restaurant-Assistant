@@ -239,9 +239,9 @@ def edit_plato(plato_id):
 ##     3.          PERSONALIZACIÓN DE COMPONENTES DE LA APP MÓVIL DESDE LA WEB 
 
 client_db = client["menu"]
-personalizacion_collection = client_db["personalización"]  # Crear una colección para la personalización
+personalizacion_collection = client_db["personalización"]  # 
 
-def save_files(imagen=None):  #Dado una inagen, retorna su id para guardarla en la bd 
+def save_files(imagen=None):  #Dado una imagen, retorna su id para guardarla en la bd 
         if imagen: 
             fs = gridfs.GridFS(client_db)
             imagen_id=fs.put(imagen)
@@ -347,6 +347,34 @@ def obtener_primer_oid():
         }), 200
     else:
         return jsonify({"mensaje": "No se encontró ningún documento"}), 404
+
+
+#--------------------------------------------------------------------------------------------------------------------------------------#
+#                                   4.Pedidos de los clientes
+
+pedidos_collection = client_db["tickets"]  #
+
+
+##Obtener la lista de pedidos 
+@app.route("/pedidos", methods=["GET"])
+def get_pedidos():
+    pedidos = pedidos_collection.find()
+    if pedidos:
+        return jsonify(json_util.dumps(pedidos)), 200
+    else:
+        return jsonify({"message":"No se encontró ningún pedido"}), 404
+
+
+@app.route("/pedidos/<id>", methods=["DELETE"])
+def delete_pedido(id):
+    pedido = pedidos_collection.find_one({"_id": ObjectId(id)})
+    if pedido:
+        pedidos_collection.delete_one({"_id": ObjectId(id)})
+        return jsonify({"message":"Pedido borrado correctamente"}), 200
+    else:
+        return jsonify({"message":"Pedido no encontrado"}), 404
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
