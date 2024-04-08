@@ -10,6 +10,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
 
+import { ToastContainer, toast , Bounce} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const SignupForm = ({ handleSubmit, handleChange, formData }) => {
 
@@ -57,6 +61,7 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => {
         <button type="submit" className="submit">Crear cuenta</button>
       </div>
     </form>
+    <ToastContainer/>
   </div>
 );
 }

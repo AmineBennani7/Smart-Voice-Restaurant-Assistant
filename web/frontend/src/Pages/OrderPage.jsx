@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Table, Container } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast , Bounce} from 'react-toastify';
 
 
 const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
@@ -39,13 +41,14 @@ const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
                             <td>{pedido.precio_total}€</td>
                             <td>
                                 <Button variant="danger" onClick={() => onDelete(pedido._id.$oid)}>
-                                    Pedido preparado
+                                   ¡ Pedido listo !
                                 </Button>
                             </td>
                     </tr>
                     ))}
                 </tbody>
             </Table>
+            <ToastContainer/>
         </Container>
     );
 }

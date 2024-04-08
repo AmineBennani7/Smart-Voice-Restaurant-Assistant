@@ -47,7 +47,7 @@ const dashboardPage = ({ isSidebarOpen, handleToggleClick,tickets, navigate, use
             </li>
                         <li class="sidebar-item">
                         <a href="#" class="sidebar-link" onClick={() => navigate(`/userInfo/${username}`)}>
-                           Borrar un encargado
+                           Información de los encargados
                             </a>
                         </li>
                        

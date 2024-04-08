@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import OrderList from '../Pages/OrderPage';
 
+import useNotification from './Utils/useNotification'
+
 
 
 
@@ -47,6 +49,8 @@ useEffect(() => {
                 console.error('Error', error);
             });
     };
+    const tickets = useNotification();    //funcion useNotification en carpeta utils 
+
   
   
     return (
@@ -55,6 +59,7 @@ useEffect(() => {
           onDelete={handleDelete}
           username={username}
           navigate={navigate}
+          tickets={tickets}
         />
     );
   

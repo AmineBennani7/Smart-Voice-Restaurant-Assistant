@@ -3,6 +3,9 @@ import SignupForm from '../Pages/SignupPage'; // Importando el nuevo componente
 import '../Components/Styles/LoginSignup.css';
 import { validateFormData, validateEmail, phoneNumberPattern } from './validators/signupValidator';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import useNotification from './Utils/useNotification'
+
 const Signup = () => {
     const [formData, setFormData] = useState({
       fullname: '',
@@ -63,6 +66,10 @@ const Signup = () => {
         console.error('Error al enviar el formulario:', error);
       }
     };
+
+    
+    const tickets = useNotification();    //funcion useNotification en carpeta utils 
+
     
     return (
         <SignupForm handleChange={handleChange} handleSubmit={handleSubmit} formData={formData} />

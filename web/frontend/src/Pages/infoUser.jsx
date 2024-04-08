@@ -2,6 +2,9 @@ import React, { useState , useEffect } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'react-bootstrap-icons'; // Import the left arrow icon from 'react-bootstrap-icons'
+import useNotification from '../Components/Utils/useNotification'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast , Bounce} from 'react-toastify';
 
 
 const UsuariosInfo = () => {
@@ -44,6 +47,10 @@ const UsuariosInfo = () => {
     }
 }
 
+
+const tickets = useNotification();    //funcion useNotification en carpeta utils 
+
+
     return (
         <div className="container">
            <div style={{display: 'flex', alignItems: 'center'}}>
@@ -83,6 +90,8 @@ const UsuariosInfo = () => {
               style={{margin: "0 auto", display: "block"}}>
                 Añadir un nuevo empleado
             </Button>
+            <ToastContainer/>
+
         </div>
     );
 }

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Container, Form, Button, Row, Col, Image, Modal } from 'react-bootstrap';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast , Bounce} from 'react-toastify';
+
 
 const Customization = ({
   handleInputChange,
@@ -12,7 +15,7 @@ const Customization = ({
   logoPrincipalSrc,
   logoSecundarioSrc,
   nombreRestaurante,
-  showModal,username,navigate
+  showModal,username,navigate,ticket
 }) => {
   return (
     <Container>
@@ -112,7 +115,9 @@ const Customization = ({
           <Button variant="primary" onClick={handleSaveChanges}>Guardar Cambios</Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </Container>
+    
   );
     }
 

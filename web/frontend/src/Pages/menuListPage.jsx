@@ -2,10 +2,12 @@ import React, { useState , useEffect } from 'react';
 import { Table, Button, Modal, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { useNavigate , useParams } from 'react-router-dom';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
+import { ToastContainer, toast , Bounce} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
     
-const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoPlato, setNuevoPlato, handleVariationChange, addNewVariation, handleDelete, handleShowEditModal, showEditModal, editPlato,setEditPlato, handleCloseEditModal,handleEdit,username,navigate }) => (
+const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoPlato, setNuevoPlato, handleVariationChange, addNewVariation, handleDelete, handleShowEditModal, showEditModal, editPlato,setEditPlato, handleCloseEditModal,handleEdit,username,navigate,ticket }) => (
 
         <div className="container" style={{ marginTop: '2em', marginBottom: '2em' }}>
              <div style={{display: 'flex', alignItems: 'center'}}>
@@ -156,7 +158,9 @@ const MenuListForm = ({ platos, show, handleClose, handleShow, handleAdd, nuevoP
                     ))}
                 </tbody>
             </Table>
+            <ToastContainer />
         </div>
+        
     );
                                      
 

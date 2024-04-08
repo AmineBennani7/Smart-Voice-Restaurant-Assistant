@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import CustomizationForm from '../Pages/customizationPage';
 import { useNavigate, useParams } from 'react-router-dom';
+import useNotification from './Utils/useNotification'
+
 
 
 
@@ -103,6 +105,11 @@ const Customization = () => {
   }
 };
 
+ //NOTIFICACIONES 
+ const tickets = useNotification();    //funcion useNotification en carpeta utils 
+
+
+
 
 
 return (
@@ -117,6 +124,7 @@ return (
     handleSaveChanges={handleSaveChanges}
     username={username}
     navigate={navigate}
+    tickets={tickets}
   />
 );
 

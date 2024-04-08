@@ -2,6 +2,9 @@ import React, { useState , useEffect } from 'react';
 import { Table, Button, Modal, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { useNavigate , useParams } from 'react-router-dom';
 import MenuListForm from '../Pages/menuListPage';
+import useNotification from './Utils/useNotification'
+
+
 
 
 
@@ -188,6 +191,7 @@ const handleVariationChange = (index, field, value) => {
         }
     };
     
+    const tickets = useNotification();    //funcion useNotification en carpeta utils 
 
     return (
         <MenuListForm
@@ -209,6 +213,7 @@ const handleVariationChange = (index, field, value) => {
             handleEdit={handleEdit}
             navigate={navigate}
             username={username}
+            ticket={tickets}
         />
     );  
 };
