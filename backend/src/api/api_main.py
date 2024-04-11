@@ -3,20 +3,23 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 
 
+import sys
 import os
-import sys 
 
-sys.path.insert(0, 'backend/src/chatbot')
+# Agregar el directorio 'chatbot' al sys.path para importar desde allí
+current_dir = os.path.dirname(__file__)
+chatbot_dir = os.path.join(current_dir, '..', 'chatbot')
+sys.path.insert(0, os.path.abspath(chatbot_dir))
 
-from  chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, parse, insert_bbdd, calculate_retriever, get_conversation_chain 
-from  chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido
-from  chatbot_main import initMemoria
+# Ahora puedes importar chatbot_utils
+from chatbot_utils import load_dataset, create_chunks, create_or_get_vector_store, parse, insert_bbdd, calculate_retriever, get_conversation_chain
+
+from chatbot_preprompts import system_message_prompt_info, system_message_prompt_pedido
+from chatbot_main import initMemoria
 
 
 app = Flask(__name__)
 CORS(app)
-
-
 
 
 

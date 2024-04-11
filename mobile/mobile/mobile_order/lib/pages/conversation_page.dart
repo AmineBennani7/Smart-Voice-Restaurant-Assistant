@@ -159,7 +159,7 @@ Widget build(BuildContext context) {
 
   Future<void> sendTextToAPI(String text) async {
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/chat'),
+      Uri.parse('http://10.0.2.2:8000/chat'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
