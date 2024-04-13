@@ -2,18 +2,17 @@ import React from 'react';
 import { Button, Table, Container } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer, toast , Bounce} from 'react-toastify';
-
+import { ToastContainer } from 'react-toastify';
 
 const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
     return (
         <Container>
         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-              <Button 
-            variant="light" 
-            onClick={() => navigate(`/dashboard/${username}`)} 
-            style={{border: 'none'}}>
-            <ArrowLeft size={36} />
+            <Button 
+               variant="light" 
+               onClick={() => navigate(`/dashboard/${username}`)} 
+               style={{border: 'none'}}>
+               <ArrowLeft size={36} />
             </Button>
             <h1 className="my-4">Lista de pedidos en curso</h1>
         </div>
@@ -22,6 +21,7 @@ const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
                     <tr>
                         <th>Número de pedido</th>
                         <th>Platos</th>
+                        <th>Cantidad</th>
                         <th>Precio Total</th>
                         <th>Acción</th>
                     </tr>
@@ -33,8 +33,14 @@ const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
                             <td>
                                 {pedido.platos.map((plato, index) => (
                                     <p key={index}>
-                                        Tipo: {plato.tipo}, Nombre: {plato.nombre}, Tamaño:
-                                        {plato.tamaño}, Precio: {plato.precio}€, Cantidad: {plato.cantidad}
+                                        Nombre: {plato.nombre}, Tamaño: {plato.tamaño}
+                                    </p>
+                                ))}
+                            </td>
+                            <td>
+                                {pedido.platos.map((plato, index) => (
+                                    <p key={index}>
+                                        Cantidad: {plato.cantidad}
                                     </p>
                                 ))}
                             </td>
