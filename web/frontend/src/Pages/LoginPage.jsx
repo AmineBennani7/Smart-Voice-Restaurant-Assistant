@@ -3,7 +3,7 @@ import { Container, Form, Button, Image } from 'react-bootstrap';
 import password from '../Assets/password.png';
 import usuario from '../Assets/usuario.png';
 import Admin2 from '../Assets/admin.png';
-import Footer from '../Components/Utils/footer'; // Importa el componente Footer
+import Footer from '../Components/Utils/footer'; // 
 
 const LoginForm = ({ handleChange, handleSubmit, formData }) => {
   return (
