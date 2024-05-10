@@ -15,16 +15,14 @@ from speech.textToSpeech import text_to_speech ,  reproducir_mp3
 
 
 
-def initMemoria(): #input_key='question'
+def initMemoria(): 
     memory = ConversationBufferMemory(
-    memory_key="history",
+    memory_key="history", #historial de la conversación a corto plazo del chatbot
     input_key="question"
 )
     return memory
 
-  
 def main():
-    
     load_dotenv()  # load environment variables (API_KEY)
     dataset = load_dataset("menu_dataset/menus_dataset.csv")
     chunks = create_chunks(dataset, 2000, 0)
@@ -34,7 +32,7 @@ def main():
     retriever1=calculate_retriever(vector_store,dataset)
     memory=initMemoria()
     print(memory)
-    prompt=system_message_prompt_info #Default prompt
+    prompt=system_message_prompt_info #Default prompt   
 
 
     while True:
@@ -43,7 +41,6 @@ def main():
         query = speech_recognizer.insert_audio()
         print(query)
        
-        #query=input("Introduce una petición al chatbot : ") #Para escribir la query manualmente
 
         # Si la pregunta del usuario es "Quiero empezar a pedir", cambiar el estado.
         if any(word in query.strip().lower() for word in ["quiero empezar a pedir", "deseo pedir", "ya quiero pedir","quiero pedir"]) and not any(word in query.strip().lower() for word in ["no"]):
@@ -58,20 +55,10 @@ def main():
         mp3_file = text_to_speech(response)
         reproducir_mp3(mp3_file)
 
-        #Cuando imprima el ticket, lo subimos a la bbdd de tickets y acabamos el sistema  
         if "Número de pedido" in response:
             parseo=parse(response)
             insert_bbdd(parseo)
             sys.exit()
 
-
-       # print(memory) #chat_memory=ChatMessageHistory(messages=[HumanMessage(content='buenas tardes'), AIMessage(content='¡Bienvenidos a nuestro restaurante! ¿Desean hacer un pedido o quieren información sobre nuestro menú?')]) input_key='question'
-        #print(memory.load_memory_variables({})) #Para ver historialde la converacion 
-       #{'history': 'Human: hola\n
-            #AI: Bienvenido a nuestro restaurante. ¿Desea hacer un pedido o quiere información sobre nuestro menú?\n
-            #Human: qué hay en el menú\
-            #nAI: En nuestro menú tenemos las siguientes categorías: Pizzas, Calzones, Pastas y Bebidas. ¿Desea más detalles sobre alguna categoría en particular?'}
-
-   
 if __name__ == "__main__":
     main()

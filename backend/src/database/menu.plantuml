@@ -1,38 +1,47 @@
-@startuml menu 
+@startuml menu
 skinparam classBackgroundColor AliceBlue
 skinparam classBorderColor Blue
 skinparam classFontName Comic Sans 
 skinparam classFontSize 20
 
-class Dish {
-  - _id: int
-  - category: String
-  - dish_name: String
-  - description: String
+class Empleado {
+ - _id: string
+ - nombre_usuario: String
+ - nombre: String
+ - apellido: String
+ - numero_teléfono: String
+ - correo: String
+ - contraseña: String
 }
 
-class DishVariation {
-  - _id: int
-  - variation: String
-  - price: double
+class PlatosMenu {
+  - _id: string
+  - categoría: String
+  - nombre: String
+  - descripción: String
+  - variaciones: Array<Variacion>
 }
 
-class Ticket {
-  - _id: int
-  - orderNumber: int
-  - dishes: List<DishDetail>
-  - totalAmount: double
+class Variación {
+  - variación: String
+  - precio: double
 }
 
-class DishDetail {
-  - _id: int
-  - dishName: String
-  - size: String
-  - price: double
-  - numberOfDishes: int 
+class Pedido {
+ - _id: string
+ - numero_pedido: int
+ - detalles: Array<DetallePedido>
+ - precio_total: double
 }
 
-Dish "1" --o "1..*" DishVariation : contains
-Ticket "1" --o "1..*" DishDetail : contains
-
+class DetallePedido {
+ - tipo: String
+ - numero: int
+ - nombre: String
+ - tamaño: String
+ - precio: double
+ - cantidad: int
+}
+PlatosMenu "1" *-- "1..*" Variación : contains
+Pedido "1" *-- "1..*" DetallePedido : contains
 @enduml

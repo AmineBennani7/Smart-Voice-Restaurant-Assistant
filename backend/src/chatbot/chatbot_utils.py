@@ -52,37 +52,29 @@ def create_chunks(dataset: pd.DataFrame, chunk_size:int, chunk_overlap:int):
           chunk_size=1000
       )
   )
-    
-    # agregar metadatos a los fragmentos para facilitar la recuperación.
-    
+    # agregar metadatos a los fragmentos para facilitar la recuperación. 
    for chunk in chunks:
-     # print (chunk)
 
-     # Agregar metadata como:
      name = chunk.page_content 
-    # print(name)
      category = chunk.metadata['category']
      description= chunk.metadata['description']
      variations = chunk.metadata['variations']
      
-     # Agregar todo al contenido
+ 
      content = f"Name: {name} \nCategory: {category} \nDescription: {description} \nVariations: {variations}"   # nExtras: {extras}"
      
      chunk.page_content = content
      
    return chunks
 
-
-
-
 def create_or_get_vector_store(chunks) -> FAISS:
     """Crea o carga BBDD vectorial de manera local"""
 
-    embeddings = OpenAIEmbeddings() # USAMOS EL EMBEDDING DE OPENAI DE MOMENTO
+    embeddings = OpenAIEmbeddings() #embedding de open_ai
 
     if not os.path.exists("./vectorialDB"):
         print("CREATING DB")
-         # load data
+        
         vectorstore = FAISS.from_documents(
                 chunks, embeddings
             )

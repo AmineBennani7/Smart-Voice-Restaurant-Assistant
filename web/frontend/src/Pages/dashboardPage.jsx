@@ -62,7 +62,7 @@ const dashboardPage = ({ isSidebarOpen, handleToggleClick,tickets, navigate, use
                     <ul id="notifications" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li class="sidebar-item">
                         <a href="#" class="sidebar-link" onClick={() => navigate(`/orders/${username}`)}>
-                            Notificaciones cocina
+                            Pedidos en curso
                             </a>
 
 
@@ -105,9 +105,14 @@ const dashboardPage = ({ isSidebarOpen, handleToggleClick,tickets, navigate, use
     <div className="header">
         <div className="text">Bienvenido {username}</div>
         <div className="h6">
-        <strong>Este es el panel de control donde se podrá añadir nuevos empleados, ver nuevos pedidos de los clientes o modificar la app móvil y el menú</strong>
+        <strong>En este panel de control, tendrás la capacidad de gestionar diversas funciones clave de la aplicación. </strong><br></br>
+        <strong>Desde aquí, podrás realizar una variedad de tareas importantes para el funcionamiento de la plataforma.  </strong><br></br>
+        <strong>Entre las principales funciones se incluyen la capacidad de añadir nuevos empleados, visualizar los pedidos realizados por los clientes y realizar modificaciones en la aplicación móvil y el menú. </strong>
+       
         </div>     
      </div>
+
+     
     
 
         
