@@ -3,6 +3,7 @@ import { Button, Table, Container } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import Footer from '../Components/Utils/footer';
 
 const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
     return (
@@ -55,6 +56,8 @@ const OrderForm = ({ pedidos, onDelete, navigate, username }) => {
                 </tbody>
             </Table>
             <ToastContainer/>
+           
+
         </Container>
     );
 }

@@ -227,6 +227,12 @@ def edit_plato(plato_id):
 
 
 
+#get categorias para las piecharts
+@app.route("/categorias", methods=["GET"])
+def get_categorias():
+    categorias = platos_collection.distinct("categoria")
+    return jsonify(categorias)
+
 
 
 ###--------------------------------------------------------------------------------------------------------------------

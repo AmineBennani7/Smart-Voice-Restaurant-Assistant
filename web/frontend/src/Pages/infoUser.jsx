@@ -6,6 +6,7 @@ import useNotification from '../Components/Utils/useNotification'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast , Bounce} from 'react-toastify';
 
+import Footer from '../Components/Utils/footer';
 
 const UsuariosInfo = () => {
     const [users, setUsers] = useState([]);

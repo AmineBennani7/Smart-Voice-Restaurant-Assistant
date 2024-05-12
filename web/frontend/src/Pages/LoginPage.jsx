@@ -46,7 +46,6 @@ const LoginForm = ({ handleChange, handleSubmit, formData }) => {
         </div>
       </Container>
       
-      <Footer />
     </div>
   );
 };

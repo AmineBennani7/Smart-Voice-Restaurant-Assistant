@@ -4,6 +4,7 @@ import { useNavigate , useParams } from 'react-router-dom';
 import { ArrowLeft } from 'react-bootstrap-icons'; 
 import { ToastContainer, toast , Bounce} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Footer from '../Components/Utils/footer';
 
 
     

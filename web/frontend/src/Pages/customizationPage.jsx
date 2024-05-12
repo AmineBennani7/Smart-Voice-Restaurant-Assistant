@@ -6,6 +6,7 @@ import { ArrowLeft } from 'react-bootstrap-icons';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast , Bounce} from 'react-toastify';
 
+import Footer from '../Components/Utils/footer';
 
 const Customization = ({
   handleInputChange,
@@ -116,6 +117,7 @@ const Customization = ({
         </Modal.Footer>
       </Modal>
       <ToastContainer />
+
     </Container>
     
   );

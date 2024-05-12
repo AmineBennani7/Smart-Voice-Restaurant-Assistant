@@ -12,6 +12,8 @@ import axios from 'axios';
 import notificationSound from '../Components/Sounds/pending-notification.mp3'; // Importando el sonido
 import DashboardPage from '../Pages/dashboardPage';
 import useNotification from './Utils/useNotification'
+import { Bar } from 'react-chartjs-2'; // Importa el componente de gráfico que deseas utilizar
+
 
 
 const Dashboard = () => {
@@ -49,18 +51,49 @@ const Dashboard = () => {
       }
     
 
-    return (
-        <DashboardPage
-          isSidebarOpen={isSidebarOpen}
-          onToggleClick={handleToggleClick}
-          tickets={tickets}
-          username={username}
-          navigate={navigate}
-          handleLogout={handleLogout}
-        />
-      );
-      
-    }
+// Datos de ejemplo para la gráfica
+const chartData = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+  datasets: [
+      {
+          label: 'Tickets',
+          backgroundColor: 'rgba(75,192,192,1)',
+          borderColor: 'rgba(0,0,0,1)',
+          borderWidth: 1,
+          data: [65, 59, 80, 81, 56, 55]
+      }
+  ]
+};
 
+return (
+  <DashboardPage
+      isSidebarOpen={isSidebarOpen}
+      onToggleClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      tickets={tickets}
+      username={username}
+      navigate={navigate}
+      handleLogout={handleLogout}
+  >
+      {/* Aquí integrarás tu gráfico */}
+      <div className="chart-container">
+          <h2>Monthly Ticket Overview</h2>
+          <Bar
+              data={chartData}
+              options={{
+                  title: {
+                      display: true,
+                      text: 'Ticket Overview',
+                      fontSize: 20
+                  },
+                  legend: {
+                      display: true,
+                      position: 'right'
+                  }
+              }}
+          />
+      </div>
+  </DashboardPage>
+);
+}
 
-    export default Dashboard;
+export default Dashboard;

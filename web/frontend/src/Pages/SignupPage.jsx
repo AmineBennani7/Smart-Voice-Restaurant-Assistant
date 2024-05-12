@@ -37,7 +37,7 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => {
           </div>
 
           <Form onSubmit={handleSubmit}>
-            <div className="mb-3 d-flex align-items-center">
+          <div className="mb-3 d-flex align-items-center">
               <Image src={licencia} alt="nombre" className="me-3" style={{ width: '40px', height: '40px' }} />
               <Form.Control
                 type="text"
@@ -46,15 +46,14 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => {
                 value={formData.fullname}
                 onChange={handleChange}
               />
-            </div>
-            <div className="mb-3 d-flex align-items-center">
-              <Image src={licencia} alt="apellido" className="me-3" style={{ width: '40px', height: '40px' }} />
+              {/* Agregar espacio entre Nombre y Apellido */}
               <Form.Control
                 type="text"
                 placeholder="Apellido"
                 name="lastname"
                 value={formData.lastname}
                 onChange={handleChange}
+                className="ms-3"
               />
             </div>
             <div className="mb-3 d-flex align-items-center">
@@ -106,7 +105,6 @@ const SignupForm = ({ handleSubmit, handleChange, formData }) => {
         </div>
       </Container>
       
-      <Footer />
     </div>
   );
 };
