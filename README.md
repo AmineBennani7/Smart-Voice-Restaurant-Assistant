@@ -3,6 +3,9 @@
 
 
 
+[![es](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/AmineBennani7/Proyecto-Reconocimiento-Vocal/blob/master/README.es.md)
+
+
 
 
 
