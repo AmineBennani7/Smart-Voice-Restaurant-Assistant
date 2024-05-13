@@ -11,7 +11,7 @@
 
 
 
-# Voice-Based Restaurant Order Virtual Assistant for Mobile App: 
+# Voice-Based Restaurant Order Virtual Assistant for Mobile App:
 
 ## About This Project
 
@@ -24,11 +24,11 @@ For the correct operation of the chatbot, it connects through **Langchain to the
 In addition, the system includes a web application intended exclusively for restaurant employees or administrators. This application will allow them to manage orders received and make adjustments related to the configuration of the mobile application and the personalization of the restaurant menu.
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <img src="../../imgs/movil3.png" alt="Imagen Izquierda" style="width: 27%;"  />
-    <img src="../../imgs/movil4.png" alt="Imagen Derecha" style="width: 50%;" />
+    <img src="imgs/movil3.png" alt="Imagen Izquierda" style="width: 27%;"  />
+    <img src="imgs/movil4.png" alt="Imagen Derecha" style="width: 50%;" />
 </div>
 
-<img src="../../imgs/web2.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
+<img src="imgs/web2.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
 
 ## Built with
 
@@ -71,7 +71,7 @@ To use the GPT-4-1106-preview model of OpenAI in your application, you will need
 ```bash
 cd backend/src/chatbot/ && python -m venv .env
 ```
-<img src="../../imgs/env.png" alt="Imagen Abajo" style="width: 70%;, height: 100%" />
+<img src="imgs/env.png" alt="Imagen Abajo" style="width: 70%;, height: 100%" />
 
 &nbsp;
 
@@ -117,10 +117,10 @@ cd .\web\frontend ; npm start
 
 ## More images 
 
-<img src="../../imgs/web3.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
+<img src="imgs/web3.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
 &nbsp;
 
-<img src="../../imgs/web7.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
+<img src="imgs/web7.png" alt="Imagen Abajo" style="width: 100%;, height: 100%" />
 
 
 
