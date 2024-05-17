@@ -114,6 +114,32 @@ def delete_user(userid):
 
     return jsonify({"message": "Usuario no encontrado"}), 404
 
+#1.5.Modificar contraseña:
+# Ruta para modificar la contraseña de un usuario específico
+@app.route("/change_password/<username>", methods=["PUT"])
+@jwt_required()
+def change_password(username):
+    current_user = get_jwt_identity()  # Obtener el usuario actual desde el token JWT
+    data = request.json  # Obtener los datos enviados en la solicitud
+    current_password = data.get("current_password")
+    new_password = data.get("new_password")
+
+    if not current_password or not new_password:
+        return jsonify({"message": "Se requieren ambos campos: contraseña actual y nueva contraseña"}), 400
+
+    user = usuarios_collection.find_one({"username": username})
+    if not user:
+        return jsonify({"message": "El usuario especificado no existe"}), 404
+
+    if current_user != username:
+        return jsonify({"message": "No tienes permiso para cambiar la contraseña de otro usuario"}), 403
+
+    if not check_password_hash(user['password'], current_password):
+        return jsonify({"message": "La contraseña actual es incorrecta"}), 401
+
+    new_password_hash = generate_password_hash(new_password)
+    usuarios_collection.update_one({"username": username}, {"$set": {"password": new_password_hash}})
+    return jsonify({"message": "Contraseña actualizada correctamente"}), 200
 
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Nav, Col, Row, Card, ListGroup } from 'react-bootstrap';
+import { OverlayTrigger, Button, Nav, Col, Row, Card, ListGroup, Tooltip } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Components/Styles/Dashboard.css';
 import { useState, useEffect } from 'react';
@@ -10,17 +10,20 @@ import 'react-toastify/dist/ReactToastify.css';
 import Footer from '../Components/Utils/footer';
 import { Chart } from 'react-google-charts';
 import PlatosPie from '../Components/Utils/Stats'
+import ChangePasswordModal from '../Components/changePasswordModal';
+
+
 
 
 
 
   
-  const DashboardPage = ({ isSidebarOpen, handleToggleClick, tickets, navigate, username, handleLogout }) => {
-   
+  const DashboardPage = ({ isSidebarOpen, handleToggleClick, tickets, navigate, username, handleLogout, showChangePasswordModal, setShowChangePasswordModal, handlePasswordChange, oldPassword, setOldPassword, newPassword, setNewPassword }) => {
+    const [showPasswordTooltip, setShowPasswordTooltip] = useState(false);
 
+    
 
-
-  return (
+     return (
     <body>
    
 
@@ -36,10 +39,12 @@ import PlatosPie from '../Components/Utils/Stats'
             </div>
             <ul className="sidebar-nav">
             <li className="sidebar-item">
+                
                     <a href="#" className="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                         data-bs-target="#users" aria-expanded="false" aria-controls="users">
                         <i className="lni lni-user"></i>
                         <span>Usuarios</span>
+                        
                     </a>
                     <ul id="users" className="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                     <li className="sidebar-item">
@@ -105,11 +110,23 @@ import PlatosPie from '../Components/Utils/Stats'
              </div>
             
              <div style={{ display: 'flex', alignItems: 'center' }}>
-             <div className='ml-2' style={{fontSize: '15px', color: '#888', fontWeight: 'normal'}}>
-                ¡ Hola {username}!
-               </div>
-             </div>
-           </div>
+              <div className='ml-2' style={{ fontSize: '15px', color: '#888', fontWeight: 'normal' }}>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip id="password-tooltip">Modificar contraseña</Tooltip>}
+                  show={showPasswordTooltip}
+                >
+                  <a
+                    onClick={() => setShowChangePasswordModal(true)}
+                    onMouseEnter={() => setShowPasswordTooltip(true)}
+                    onMouseLeave={() => setShowPasswordTooltip(false)}
+                  >
+                    Hola {username}
+                  </a>
+                </OverlayTrigger>
+              </div>
+            </div>
+          </div>
            
         <div className="main p-3">
         <Card className='my-5'>
@@ -141,6 +158,15 @@ import PlatosPie from '../Components/Utils/Stats'
         crossOrigin="anonymous"></script>
     <script src="script.js"></script>
     <ToastContainer />
+    <ChangePasswordModal
+                    show={showChangePasswordModal}
+                    handleClose={() => setShowChangePasswordModal(false)}
+                    handlePasswordChange={handlePasswordChange}
+                    oldPassword={oldPassword}
+                    setOldPassword={setOldPassword}
+                    newPassword={newPassword}
+                    setNewPassword={setNewPassword}
+                />
 </body>
    
   );

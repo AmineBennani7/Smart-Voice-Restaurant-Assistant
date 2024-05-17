@@ -14,34 +14,47 @@ class Empleado {
  - contraseña: String
 }
 
-class PlatosMenu {
+class ProductosMenu {
   - _id: string
-  - categoría: String
+  - categoría: Categoría
   - nombre: String
   - descripción: String
-  - variaciones: Array<Variacion>
 }
 
 class Variación {
-  - variación: String
+  - _id: string
+  - tamaño: Tamaño
   - precio: double
+  - producto_id: string
 }
 
 class Pedido {
  - _id: string
  - numero_pedido: int
- - detalles: Array<DetallePedido>
  - precio_total: double
 }
 
 class DetallePedido {
- - tipo: String
- - numero: int
- - nombre: String
- - tamaño: String
- - precio: double
+ - _id: string
  - cantidad: int
+ - pedido_id: string
+ - producto_id: string
 }
-PlatosMenu "1" *-- "1..*" Variación : contains
-Pedido "1" *-- "1..*" DetallePedido : contains
+
+enum Tamaño {
+  Regular
+  Grande
+  Unico
+}
+
+enum Categoría {
+  Plato
+  Bebida
+}
+
+ProductosMenu "1" *-- "1..*" Variación 
+Pedido "1" *-- "1..*" DetallePedido 
+
+ProductosMenu "1" -- "0..*" DetallePedido 
+
 @enduml

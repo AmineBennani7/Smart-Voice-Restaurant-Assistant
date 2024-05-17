@@ -8,17 +8,57 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Admin from '../Assets/admin.png';
 import { ToastContainer, toast , Bounce} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import notificationSound from '../Components/Sounds/pending-notification.mp3'; // Importando el sonido
 import DashboardPage from '../Pages/dashboardPage';
 import useNotification from './Utils/useNotification'
 import { Bar } from 'react-chartjs-2'; // Importa el componente de gráfico que deseas utilizar
+import axios from 'axios';
 
 
 
 const Dashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [initialTicketCount, setInitialTicketCount] = useState(null);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    
+    //MODIFICAR PASSWORD
+    const handlePasswordChange = async (event) => {
+        event.preventDefault();
+    
+        try {
+            const token = localStorage.getItem("token"); // token del almacenamiento local
+    
+            const response = await axios.put(
+                `http://localhost:5000/change_password/${username}`,
+                {
+                    current_password: oldPassword,
+                    new_password: newPassword
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Incluye el token en los encabezados
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+    
+            if (response.status === 200) {
+                toast.success('Contraseña actualizada correctamente');
+            } else {
+                if (response.status === 401) {
+                    toast.error('La contraseña actual es incorrecta');
+                } else {
+                    toast.error(response.data.message || 'Error al cambiar la contraseña');
+                }
+            }
+        } catch (error) {
+            // 
+            toast.error('La contraseña actual es incorrecta');
+        }
+    };
+    
 
   
     const handleToggleClick = () => {
@@ -49,23 +89,25 @@ const Dashboard = () => {
         // Redirigir al usuario a la página de inicio de sesión
         navigate('/');
       }
+
+      //chart por defecto, se cambia abajo
+      const chartData = {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+        datasets: [
+            {
+                label: 'Tickets',
+                backgroundColor: 'rgba(75,192,192,1)',
+                borderColor: 'rgba(0,0,0,1)',
+                borderWidth: 1,
+                data: [65, 59, 80, 81, 56, 55]
+            }
+        ]
+      };
     
 
-// Datos de ejemplo para la gráfica
-const chartData = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-  datasets: [
-      {
-          label: 'Tickets',
-          backgroundColor: 'rgba(75,192,192,1)',
-          borderColor: 'rgba(0,0,0,1)',
-          borderWidth: 1,
-          data: [65, 59, 80, 81, 56, 55]
-      }
-  ]
-};
 
 return (
+
   <DashboardPage
       isSidebarOpen={isSidebarOpen}
       onToggleClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -73,8 +115,15 @@ return (
       username={username}
       navigate={navigate}
       handleLogout={handleLogout}
+      showChangePasswordModal={showChangePasswordModal}
+      setShowChangePasswordModal={setShowChangePasswordModal}
+      handlePasswordChange={handlePasswordChange}
+      oldPassword={oldPassword}
+      setOldPassword={setOldPassword}
+      newPassword={newPassword}
+      setNewPassword={setNewPassword}
   >
-      {/* Aquí integrarás tu gráfico */}
+      {}
       <div className="chart-container">
           <h2>Monthly Ticket Overview</h2>
           <Bar
@@ -94,6 +143,7 @@ return (
       </div>
   </DashboardPage>
 );
+
 }
 
 export default Dashboard;
